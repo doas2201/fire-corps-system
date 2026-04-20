@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>消防団活動報告システム</title>
+<title>消防団活動報告システム（共有版）</title>
 <style>
         * {
             margin: 0;
@@ -151,6 +150,24 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+
+        .sync-status {
+            background: #28a745;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 1rem;
+        }
+
+        .sync-status.syncing {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .sync-status.error {
+            background: #dc3545;
         }
 
         .nav-tabs {
@@ -646,6 +663,9 @@
 <div class="login-header">
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
+<div style="background: #e8f5e8; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #2d5a2d;">
+🔄 データ共有機能付き - 全員の入力が自動同期されます
+</div>
 </div>
 <form id="loginForm">
 <div class="form-group">
@@ -685,7 +705,8 @@
 <div class="main-app" id="mainApp">
 <div class="header">
 <h1>🚒 消防団活動報告システム</h1>
-<div>
+<div style="display: flex; align-items: center;">
+<span class="sync-status" id="syncStatus">🔄 同期中...</span>
 <span id="currentUser"></span>
 <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
@@ -881,6 +902,7 @@
 <button class="admin-btn" onclick="backupData()">データバックアップ</button>
 <button class="admin-btn" onclick="restoreData()">データ復元</button>
 <button class="admin-btn" onclick="clearAllData()" style="background: #dc3545; color: white;">全データクリア</button>
+<button class="admin-btn" onclick="migrateLocalData()">ローカルデータ移行</button>
 </div>
 </div>
 <!-- モーダル -->
@@ -954,6 +976,64 @@
 </form>
 </div>
 </div>
+
+<!-- Firebase SDK -->
+<script type="module">
+    // Firebase設定
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+    import { getDatabase, ref, set, get, push, remove, onValue, off } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+
+    // Firebase設定（実際のプロジェクト設定に置き換える）
+    const firebaseConfig = {
+        apiKey: "AIzaSyDummy-Replace-With-Real-Config",
+        authDomain: "fire-corps-system.firebaseapp.com",
+        databaseURL: "https://fire-corps-system-default-rtdb.firebaseio.com",
+        projectId: "fire-corps-system",
+        storageBucket: "fire-corps-system.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "1:123456789:web:abcdef123456"
+    };
+
+    // Firebase初期化
+    let app, database;
+    let isFirebaseConnected = false;
+
+    try {
+        app = initializeApp(firebaseConfig);
+        database = getDatabase(app);
+        isFirebaseConnected = true;
+        updateSyncStatus('connected', '✅ 同期済み');
+    } catch (error) {
+        console.warn('Firebase接続失敗、ローカルモードで動作:', error);
+        isFirebaseConnected = false;
+        updateSyncStatus('error', '⚠️ オフライン');
+    }
+
+    // グローバル変数として公開
+    window.firebaseDB = {
+        database,
+        ref,
+        set,
+        get,
+        push,
+        remove,
+        onValue,
+        off,
+        isConnected: () => isFirebaseConnected
+    };
+
+    // 同期ステータス更新
+    function updateSyncStatus(status, text) {
+        const syncStatus = document.getElementById('syncStatus');
+        if (syncStatus) {
+            syncStatus.textContent = text;
+            syncStatus.className = 'sync-status ' + status;
+        }
+    }
+
+    window.updateSyncStatus = updateSyncStatus;
+</script>
+
 <script>
         // データ保存用のキー
         const STORAGE_KEYS = {
@@ -961,6 +1041,13 @@
             members: 'fireCorps_members',
             attendance: 'fireCorps_attendance',
             passwords: 'fireCorps_passwords'
+        };
+
+        // Firebase パス
+        const FIREBASE_PATHS = {
+            activities: 'activities',
+            attendance: 'attendance',
+            passwords: 'passwords'
         };
 
         // 現在のユーザー
@@ -977,7 +1064,7 @@
             { id: 'No8', name: '宮林傑', role: '班長', nickname: '傑', phone: '', email: '', isAdmin: false, isExcluded: false },
             { id: 'No9', name: '小島佑大', role: '班長', nickname: '小島', phone: '', email: '', isAdmin: false, isExcluded: false },
             { id: 'No10', name: '土肥美樹', role: '班長', nickname: '土肥', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No11', name: '相澤守', role: '班長', nickname: '相澤', phone: '', email: '', isAdmin: false, isExcluded: false },
+            { id: 'No11', name: '相沢守', role: '班長', nickname: '相沢', phone: '', email: '', isAdmin: false, isExcluded: false },
             { id: 'No12', name: '青木理', role: '機能別', nickname: '青木', phone: '', email: '', isAdmin: false, isExcluded: false },
             { id: 'No1', name: '新居寛之', role: '機能別', nickname: '新居', phone: '', email: '', isAdmin: false, isExcluded: false },
             { id: 'No2', name: '竪月志朗', role: '機能別', nickname: '竪月', phone: '', email: '', isAdmin: false, isExcluded: false }
@@ -1002,7 +1089,8 @@
                 startTime: '09:00',
                 endTime: '12:00',
                 participants: ['No1', 'No2', 'No3', 'No6', 'No11'],
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             },
             {
                 id: '1f5e06e2',
@@ -1021,7 +1109,8 @@
                 startTime: '14:00',
                 endTime: '17:00',
                 participants: ['No1', 'No2', 'No3', 'No5', 'No6', 'No7', 'No11'],
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             },
             {
                 id: '9ac67c99',
@@ -1040,7 +1129,8 @@
                 startTime: '10:00',
                 endTime: '11:00',
                 participants: ['No6'],
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             },
             {
                 id: 'fd9f390d',
@@ -1059,7 +1149,8 @@
                 startTime: '08:00',
                 endTime: '12:00',
                 participants: ['No1', 'No2', 'No3', 'No5', 'No6', 'No7', 'No11'],
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             },
             {
                 id: 'a0ad3012',
@@ -1078,7 +1169,8 @@
                 startTime: '10:00',
                 endTime: '15:00',
                 participants: ['No5', 'No3', 'No6', 'No4', 'No7', 'No10', 'No11'],
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             }
         ];
 
@@ -1092,7 +1184,8 @@
                 memberName: '新居寛之',
                 startTime: '14:00',
                 endTime: '17:00',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             },
             {
                 id: 'a7e266e5',
@@ -1102,13 +1195,96 @@
                 memberName: '竪月志朗',
                 startTime: '19:00',
                 endTime: '22:00',
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: 'system'
             }
         ];
 
+        // Firebase データ操作関数
+        async function saveToFirebase(path, data) {
+            if (!window.firebaseDB.isConnected()) {
+                return false;
+            }
+            
+            try {
+                updateSyncStatus('syncing', '🔄 同期中...');
+                const dbRef = window.firebaseDB.ref(window.firebaseDB.database, path);
+                await window.firebaseDB.set(dbRef, data);
+                updateSyncStatus('connected', '✅ 同期済み');
+                return true;
+            } catch (error) {
+                console.error('Firebase保存エラー:', error);
+                updateSyncStatus('error', '❌ 同期失敗');
+                return false;
+            }
+        }
+
+        async function loadFromFirebase(path) {
+            if (!window.firebaseDB.isConnected()) {
+                return null;
+            }
+            
+            try {
+                const dbRef = window.firebaseDB.ref(window.firebaseDB.database, path);
+                const snapshot = await window.firebaseDB.get(dbRef);
+                return snapshot.exists() ? snapshot.val() : null;
+            } catch (error) {
+                console.error('Firebase読み込みエラー:', error);
+                return null;
+            }
+        }
+
+        async function addToFirebase(path, data) {
+            if (!window.firebaseDB.isConnected()) {
+                return null;
+            }
+            
+            try {
+                updateSyncStatus('syncing', '🔄 同期中...');
+                const dbRef = window.firebaseDB.ref(window.firebaseDB.database, path);
+                const newRef = await window.firebaseDB.push(dbRef, data);
+                updateSyncStatus('connected', '✅ 同期済み');
+                return newRef.key;
+            } catch (error) {
+                console.error('Firebase追加エラー:', error);
+                updateSyncStatus('error', '❌ 同期失敗');
+                return null;
+            }
+        }
+
+        // データ保存（Firebase + ローカル）
+        async function saveData(key, data) {
+            // ローカルストレージに保存
+            localStorage.setItem(key, JSON.stringify(data));
+            
+            // Firebaseに保存
+            const firebasePath = FIREBASE_PATHS[key.replace('fireCorps_', '')];
+            if (firebasePath) {
+                await saveToFirebase(firebasePath, data);
+            }
+        }
+
+        // データ読み込み（Firebase優先、フォールバックでローカル）
+        async function loadData(key) {
+            const firebasePath = FIREBASE_PATHS[key.replace('fireCorps_', '')];
+            
+            if (firebasePath) {
+                const firebaseData = await loadFromFirebase(firebasePath);
+                if (firebaseData) {
+                    // Firebaseデータをローカルにも保存
+                    localStorage.setItem(key, JSON.stringify(firebaseData));
+                    return firebaseData;
+                }
+            }
+            
+            // フォールバック: ローカルストレージから読み込み
+            const localData = localStorage.getItem(key);
+            return localData ? JSON.parse(localData) : null;
+        }
+
         // パスワード管理
-        function initializePasswords() {
-            let passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+        async function initializePasswords() {
+            let passwords = await loadData(STORAGE_KEYS.passwords) || {};
             
             members.forEach(member => {
                 if (!passwords[member.name]) {
@@ -1120,7 +1296,7 @@
                 }
             });
             
-            localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+            await saveData(STORAGE_KEYS.passwords, passwords);
             return passwords;
         }
 
@@ -1138,7 +1314,7 @@
         }
 
         // パスワード設定フォームの処理
-        document.getElementById('passwordSetupForm').addEventListener('submit', function(e) {
+        document.getElementById('passwordSetupForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const setupId = document.getElementById('setupId').value.replace(/\s+/g, '');
@@ -1161,32 +1337,76 @@
                 return;
             }
             
-            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+            const passwords = await loadData(STORAGE_KEYS.passwords) || {};
             passwords[user.name] = {
                 password: newPassword,
                 isDefault: false,
                 lastChanged: new Date().toISOString()
             };
-            localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+            await saveData(STORAGE_KEYS.passwords, passwords);
             
             alert('パスワードが設定されました！ログイン画面に戻ります。');
             showLogin();
         });
 
         // 初期化
-        function init() {
-            initializePasswords();
-            loadData();
+        async function init() {
+            await initializePasswords();
+            await loadInitialData();
             updateDashboard();
             displayMembers();
             displayActivityList();
             setupMemberSelection();
             setupDriverLeaderSelects();
             setInitialMeterDistance();
+            
+            // Firebase リアルタイム同期の設定
+            setupRealtimeSync();
+        }
+
+        // 初期データの読み込み
+        async function loadInitialData() {
+            let activities = await loadData(STORAGE_KEYS.activities);
+            let attendance = await loadData(STORAGE_KEYS.attendance);
+            
+            if (!activities || activities.length === 0) {
+                await saveData(STORAGE_KEYS.activities, initialActivities);
+            }
+            
+            if (!attendance || attendance.length === 0) {
+                await saveData(STORAGE_KEYS.attendance, initialAttendance);
+            }
+        }
+
+        // リアルタイム同期の設定
+        function setupRealtimeSync() {
+            if (!window.firebaseDB.isConnected()) {
+                return;
+            }
+
+            // 活動データの同期
+            const activitiesRef = window.firebaseDB.ref(window.firebaseDB.database, FIREBASE_PATHS.activities);
+            window.firebaseDB.onValue(activitiesRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(data));
+                    updateDashboard();
+                    displayActivityList();
+                }
+            });
+
+            // 出席データの同期
+            const attendanceRef = window.firebaseDB.ref(window.firebaseDB.database, FIREBASE_PATHS.attendance);
+            window.firebaseDB.onValue(attendanceRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    localStorage.setItem(STORAGE_KEYS.attendance, JSON.stringify(data));
+                }
+            });
         }
 
         // ログイン処理
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
             const password = document.getElementById('password').value;
@@ -1197,7 +1417,7 @@
                 return;
             }
 
-            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+            const passwords = await loadData(STORAGE_KEYS.passwords) || {};
             const userPassword = passwords[user.name];
             
             if (!userPassword || userPassword.password !== password) {
@@ -1214,7 +1434,7 @@
                 document.getElementById('adminArea').style.display = 'block';
             }
             
-            init();
+            await init();
         });
 
         // ログアウト
@@ -1239,23 +1459,9 @@
             event.target.classList.add('active');
         }
 
-        // データの読み込み
-        function loadData() {
-            let activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            let attendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.attendance) || '[]');
-            
-            if (activities.length === 0) {
-                localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(initialActivities));
-            }
-            
-            if (attendance.length === 0) {
-                localStorage.setItem(STORAGE_KEYS.attendance, JSON.stringify(initialAttendance));
-            }
-        }
-
         // 直近の車両出動のメーター距離数を取得して初期設定
-        function setInitialMeterDistance() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+        async function setInitialMeterDistance() {
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
             const vehicleActivities = activities.filter(a => a.vehicleDispatch && a.meterDistance);
             
             if (vehicleActivities.length > 0) {
@@ -1316,8 +1522,8 @@
         }
 
         // ダッシュボードの更新
-        function updateDashboard() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+        async function updateDashboard() {
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
             const year = document.getElementById('periodYear').value;
             const month = document.getElementById('periodMonth').value;
             
@@ -1456,11 +1662,11 @@
         }
 
         // 活動報告フォームの処理
-        document.getElementById('activityForm').addEventListener('submit', function(e) {
+        document.getElementById('activityForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            const attendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.attendance) || '[]');
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
+            const attendance = await loadData(STORAGE_KEYS.attendance) || [];
             
             const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
             
@@ -1495,14 +1701,15 @@
                 startTime: document.getElementById('startTime').value,
                 endTime: document.getElementById('endTime').value,
                 participants: selectedMembers,
-                createdAt: new Date().toISOString()
+                createdAt: new Date().toISOString(),
+                createdBy: currentUser ? currentUser.name : 'unknown'
             };
             
             activities.push(newActivity);
-            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
+            await saveData(STORAGE_KEYS.activities, activities);
             
             // 個別時間が設定された団員の出席記録を作成
-            selectedMembers.forEach(memberId => {
+            for (const memberId of selectedMembers) {
                 const member = members.find(m => m.id === memberId);
                 const timeLabel = document.getElementById(`timeLabel-${memberId}`);
                 const timeCheckbox = timeLabel.querySelector('input[type="checkbox"]');
@@ -1520,15 +1727,16 @@
                             memberName: member.name,
                             startTime: startTime,
                             endTime: endTime,
-                            createdAt: new Date().toISOString()
+                            createdAt: new Date().toISOString(),
+                            createdBy: currentUser ? currentUser.name : 'unknown'
                         };
                         
                         attendance.push(newAttendance);
                     }
                 }
-            });
+            }
             
-            localStorage.setItem(STORAGE_KEYS.attendance, JSON.stringify(attendance));
+            await saveData(STORAGE_KEYS.attendance, attendance);
             
             this.reset();
             setupMemberSelection();
@@ -1539,14 +1747,13 @@
         });
 
         // 活動一覧の表示
-        function displayActivityList() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            filterActivities();
+        async function displayActivityList() {
+            await filterActivities();
         }
 
         // 活動のフィルタリング
-        function filterActivities() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+        async function filterActivities() {
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
             const sortOrder = document.getElementById('sortOrder').value;
             const typeFilter = document.getElementById('activityTypeFilter').value;
             const contentFilter = document.getElementById('contentFilter').value.toLowerCase();
@@ -1568,7 +1775,8 @@
                 <div class="activity-card">
                     <div class="activity-header">
                         <div class="activity-date">${activity.date}</div>
-                        ${activity.vehicleDispatch ? '<span style="color: red;">🚫</span>' : ''}
+                        ${activity.vehicleDispatch ? '<span style="color: red;">🚗</span>' : ''}
+                        ${activity.createdBy ? `<small style="color: #666;">登録者: ${activity.createdBy}</small>` : ''}
                     </div>
                     <div class="activity-title">${activity.content}</div>
                     <div class="activity-tags">
@@ -1582,7 +1790,7 @@
                     </div>
                     <div class="activity-actions">
                         <button class="btn btn-warning">詳細</button>
-                        <button class="btn btn-danger" onclick="deleteActivity('${activity.id}')">削除</button>
+                        ${currentUser && currentUser.isAdmin ? `<button class="btn btn-danger" onclick="deleteActivity('${activity.id}')">削除</button>` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1591,9 +1799,10 @@
         }
 
         // 団員一覧の表示
-        function displayMembers() {
+        async function displayMembers() {
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
+            
             const activeMembersHtml = members.filter(m => !m.isExcluded).map(member => {
-                const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
                 const memberActivities = activities.filter(a => a.participants.includes(member.id));
                 
                 return `
@@ -1617,9 +1826,9 @@
         }
 
         // 団員の活動履歴を表示
-        function showMemberActivities(memberId) {
+        async function showMemberActivities(memberId) {
             const member = members.find(m => m.id === memberId);
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
             const memberActivities = activities.filter(a => a.participants.includes(memberId));
             
             document.getElementById('modalMemberName').textContent = `${member.name}さんの活動履歴`;
@@ -1631,6 +1840,7 @@
                         ${activity.date} ${activity.startTime}〜${activity.endTime}
                         ${activity.type ? ` | ${activity.type}` : ''}
                         ${activity.vehicleDispatch ? ' | 車両出動' : ''}
+                        ${activity.createdBy ? ` | 登録者: ${activity.createdBy}` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1693,33 +1903,38 @@
         });
 
         // パスワードリセット
-        function resetMemberPassword() {
+        async function resetMemberPassword() {
             if (!currentEditingMember) return;
             
             if (confirm(`${currentEditingMember.name}さんのパスワードをリセットしますか？\n\n注意: パスワードのリセットは本人に確認してから実行してください。`)) {
-                const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                const passwords = await loadData(STORAGE_KEYS.passwords) || {};
                 passwords[currentEditingMember.name] = {
                     password: 'password',
                     isDefault: true,
                     lastChanged: new Date().toISOString()
                 };
-                localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+                await saveData(STORAGE_KEYS.passwords, passwords);
                 
                 alert('パスワードを初期値（password）にリセットしました。');
             }
         }
 
         // 活動削除
-        function deleteActivity(id) {
+        async function deleteActivity(id) {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('管理者権限が必要です。');
+                return;
+            }
+            
             if (confirm('この活動を削除しますか？')) {
-                const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+                const activities = await loadData(STORAGE_KEYS.activities) || [];
                 const filteredActivities = activities.filter(a => a.id !== id);
-                localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(filteredActivities));
+                await saveData(STORAGE_KEYS.activities, filteredActivities);
                 
                 // 関連する出席記録も削除
-                const attendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.attendance) || '[]');
+                const attendance = await loadData(STORAGE_KEYS.attendance) || [];
                 const filteredAttendance = attendance.filter(a => a.activityId !== id);
-                localStorage.setItem(STORAGE_KEYS.attendance, JSON.stringify(filteredAttendance));
+                await saveData(STORAGE_KEYS.attendance, filteredAttendance);
                 
                 displayActivityList();
                 updateDashboard();
@@ -1737,10 +1952,10 @@
         }
 
         // データエクスポート
-        function exportData() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            const attendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.attendance) || '[]');
-            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+        async function exportData() {
+            const activities = await loadData(STORAGE_KEYS.activities) || [];
+            const attendance = await loadData(STORAGE_KEYS.attendance) || [];
+            const passwords = await loadData(STORAGE_KEYS.passwords) || {};
             
             const exportData = {
                 activities: activities,
@@ -1766,20 +1981,20 @@
         }
 
         // データ復元
-        function restoreData() {
+        async function restoreData() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.json';
-            input.onchange = function(e) {
+            input.onchange = async function(e) {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = async function(e) {
                         try {
                             const data = JSON.parse(e.target.result);
-                            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(data.activities || []));
-                            localStorage.setItem(STORAGE_KEYS.attendance, JSON.stringify(data.attendance || []));
-                            localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(data.passwords || {}));
+                            await saveData(STORAGE_KEYS.activities, data.activities || []);
+                            await saveData(STORAGE_KEYS.attendance, data.attendance || []);
+                            await saveData(STORAGE_KEYS.passwords, data.passwords || {});
                             
                             alert('データの復元が完了しました！ページを再読み込みします。');
                             location.reload();
@@ -1793,13 +2008,55 @@
             input.click();
         }
 
+        // ローカルデータ移行
+        async function migrateLocalData() {
+            if (!window.firebaseDB.isConnected()) {
+                alert('Firebase接続が必要です。');
+                return;
+            }
+            
+            if (confirm('ローカルに保存されているデータをクラウドに移行しますか？')) {
+                try {
+                    updateSyncStatus('syncing', '🔄 移行中...');
+                    
+                    const localActivities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+                    const localAttendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.attendance) || '[]');
+                    const localPasswords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                    
+                    await saveToFirebase(FIREBASE_PATHS.activities, localActivities);
+                    await saveToFirebase(FIREBASE_PATHS.attendance, localAttendance);
+                    await saveToFirebase(FIREBASE_PATHS.passwords, localPasswords);
+                    
+                    updateSyncStatus('connected', '✅ 移行完了');
+                    alert('ローカルデータの移行が完了しました！');
+                } catch (error) {
+                    updateSyncStatus('error', '❌ 移行失敗');
+                    alert('データ移行に失敗しました。');
+                }
+            }
+        }
+
         // 全データクリア
-        function clearAllData() {
+        async function clearAllData() {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('管理者権限が必要です。');
+                return;
+            }
+            
             if (confirm('本当に全てのデータを削除しますか？この操作は取り消せません。')) {
                 if (confirm('最終確認：全データが削除されます。よろしいですか？')) {
+                    // ローカルストレージをクリア
                     localStorage.removeItem(STORAGE_KEYS.activities);
                     localStorage.removeItem(STORAGE_KEYS.attendance);
                     localStorage.removeItem(STORAGE_KEYS.passwords);
+                    
+                    // Firebaseもクリア
+                    if (window.firebaseDB.isConnected()) {
+                        await saveToFirebase(FIREBASE_PATHS.activities, []);
+                        await saveToFirebase(FIREBASE_PATHS.attendance, []);
+                        await saveToFirebase(FIREBASE_PATHS.passwords, {});
+                    }
+                    
                     alert('全データが削除されました。ページを再読み込みします。');
                     location.reload();
                 }
@@ -1809,7 +2066,7 @@
         // 今日の日付を設定
         document.getElementById('activityDate').valueAsDate = new Date();
 
-        console.log('🚒 消防団活動報告システム（最終版）読み込み完了！');
+        console.log('🚒 消防団活動報告システム（共有版）読み込み完了！');
     </script>
 </body>
 </html>
