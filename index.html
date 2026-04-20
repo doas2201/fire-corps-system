@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>消防団活動報告システム（共有版）</title>
+<title>消防団活動報告システム（シンプル版）</title>
 <style>
         * {
             margin: 0;
@@ -153,21 +153,12 @@
         }
 
         .sync-status {
-            background: #28a745;
-            color: white;
+            background: #ffc107;
+            color: #212529;
             padding: 0.25rem 0.5rem;
             border-radius: 15px;
             font-size: 0.8rem;
             margin-left: 1rem;
-        }
-
-        .sync-status.syncing {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .sync-status.error {
-            background: #dc3545;
         }
 
         .nav-tabs {
@@ -242,283 +233,6 @@
             background: #218838;
         }
 
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
-        .form-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .form-row .form-group {
-            flex: 1;
-            margin-bottom: 0;
-        }
-
-        /* ダッシュボード統計カード */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: #667eea;
-            color: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .stat-sublabel {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-top: 0.25rem;
-        }
-
-        /* 期間選択 */
-        .period-selector {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        /* 車両出動時の青い部分 */
-        .vehicle-section {
-            display: none;
-            background: #e3f2fd;
-            border: 2px solid #2196f3;
-            border-radius: 10px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .vehicle-section.show {
-            display: block;
-        }
-
-        /* 団員選択グリッド - スマホ対応でスリム化 */
-        .member-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-
-        .member-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 0.75rem;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .member-item:hover {
-            border-color: #667eea;
-        }
-
-        .member-item.selected {
-            background: #e3f2fd;
-            border-color: #2196f3;
-        }
-
-        .member-name {
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        .member-checkboxes {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .member-checkboxes label {
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .member-checkboxes input[type="checkbox"] {
-            width: auto;
-            margin: 0;
-        }
-
-        .individual-time-inputs {
-            display: none;
-            margin-top: 0.5rem;
-            gap: 0.25rem;
-        }
-
-        .individual-time-inputs.show {
-            display: flex;
-        }
-
-        .individual-time-inputs input {
-            flex: 1;
-            padding: 0.25rem;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            font-size: 0.8rem;
-        }
-
-        /* 活動一覧のソート */
-        .activity-filters {
-            background: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        /* 活動カード */
-        .activity-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .activity-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .activity-date {
-            font-weight: bold;
-            color: #333;
-        }
-
-        .activity-title {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-        }
-
-        .activity-tags {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .activity-tag {
-            background: #2196f3;
-            color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-        }
-
-        .activity-info {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .activity-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* 団員管理 */
-        .member-card {
-            background: white;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .member-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .member-info {
-            flex: 1;
-        }
-
-        .member-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .member-stats {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
-
-        /* 管理者エリア */
-        #adminArea {
-            display: none;
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-top: 1rem;
-        }
-
-        .admin-btn {
-            background: #ffc107;
-            color: #212529;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .admin-btn:hover {
-            background: #e0a800;
-        }
-
         .logout-btn {
             background: #dc3545;
             color: white;
@@ -530,81 +244,6 @@
 
         .logout-btn:hover {
             background: #c82333;
-        }
-
-        /* モーダル */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 2rem;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid #eee;
-        }
-
-        .close {
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            color: #999;
-        }
-
-        .close:hover {
-            color: #333;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e1e5e9;
-        }
-
-        th {
-            background: #f8f9fa;
-            font-weight: 600;
-            color: #333;
-        }
-
-        /* ラジオボタンスタイル */
-        .radio-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-            font-weight: normal;
         }
 
         @media (max-width: 768px) {
@@ -620,41 +259,6 @@
                 padding: 0.75rem 1rem;
                 font-size: 0.9rem;
             }
-
-            .form-row {
-                flex-direction: column;
-                gap: 0;
-            }
-
-            .form-row .form-group {
-                margin-bottom: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .activity-filters {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .member-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 0.5rem;
-            }
-
-            .member-item {
-                padding: 0.5rem;
-            }
-
-            .member-name {
-                font-size: 0.8rem;
-            }
-
-            .member-checkboxes label {
-                font-size: 0.7rem;
-            }
         }
     </style>
 </head>
@@ -663,8 +267,8 @@
 <div class="login-header">
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
-<div style="background: #e8f5e8; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #2d5a2d;">
-🔄 データ共有機能付き - 全員の入力が自動同期されます
+<div style="background: #fff3cd; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #856404;">
+⚠️ シンプル版 - ローカル保存のみ
 </div>
 </div>
 <form id="loginForm">
@@ -706,7 +310,7 @@
 <div class="header">
 <h1>🚒 消防団活動報告システム</h1>
 <div style="display: flex; align-items: center;">
-<span class="sync-status" id="syncStatus">🔄 同期中...</span>
+<span class="sync-status" id="syncStatus">📱 ローカル版</span>
 <span id="currentUser"></span>
 <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
@@ -718,573 +322,60 @@
 <button class="nav-tab" onclick="showTab('members')">団員管理</button>
 </div>
 <div class="tab-content active" id="dashboard">
-<div class="period-selector">
-<label>表示期間:</label>
-<select id="periodYear" onchange="updateDashboard()">
-<option value="2026">2026年度</option>
-<option value="2025">2025年度</option>
-</select>
-<select id="periodMonth" onchange="updateDashboard()">
-<option value="">全期間</option>
-<option value="04">4月</option>
-<option value="05">5月</option>
-<option value="06">6月</option>
-<option value="07">7月</option>
-<option value="08">8月</option>
-<option value="09">9月</option>
-<option value="10">10月</option>
-<option value="11">11月</option>
-<option value="12">12月</option>
-<option value="01">1月</option>
-<option value="02">2月</option>
-<option value="03">3月</option>
-</select>
-<button class="btn btn-primary" onclick="updateDashboard()">更新</button>
-</div>
-<div class="stats-grid">
-<div class="stat-card">
-<div class="stat-number" id="monthlyActivities">0</div>
-<div class="stat-label">月間活動回数</div>
-<div class="stat-sublabel" id="yearlyActivities">年間: 0回</div>
-</div>
-<div class="stat-card">
-<div class="stat-number" id="monthlyGroupActivities">0</div>
-<div class="stat-label">月間団活動回数</div>
-<div class="stat-sublabel" id="yearlyGroupActivities">年間: 0回</div>
-</div>
-<div class="stat-card">
-<div class="stat-number" id="registeredMembers">0</div>
-<div class="stat-label">登録団員数</div>
-<div class="stat-sublabel">活動中の団員</div>
-</div>
-</div>
 <div class="card">
-<h3>📊 最近の活動</h3>
-<div id="recentActivities">
-<p>最近の活動データを読み込み中...</p>
-</div>
+<h3>📊 ダッシュボード</h3>
+<p>システムが正常に動作しています。</p>
+<p>現在はローカル版で動作中です。</p>
 </div>
 </div>
 <div class="tab-content" id="activities">
 <div class="card">
-<h3>📝 新しい活動を報告</h3>
-<form id="activityForm">
-<div class="form-row">
-<div class="form-group">
-<label for="activityDate">活動日</label>
-<input id="activityDate" required="" type="date"/>
-</div>
-<div class="form-group">
-<label for="activityContent">活動内容</label>
-<input id="activityContent" placeholder="活動内容を入力" required="" type="text"/>
-</div>
-</div>
-<div class="form-group">
-<label>車両出動</label>
-<div style="display: flex; gap: 1rem;">
-<label><input checked="" name="vehicleDispatch" onchange="toggleVehicleSection()" type="radio" value="false"/> 無</label>
-<label><input name="vehicleDispatch" onchange="toggleVehicleSection()" type="radio" value="true"/> 有</label>
-</div>
-</div>
-<div class="vehicle-section" id="vehicleSection">
-<h4>🚗 車両・運転情報</h4>
-<div class="form-row">
-<div class="form-group">
-<label for="activityType">活動種別</label>
-<select id="activityType">
-<option value="">選択してください</option>
-<option value="火災">火災</option>
-<option value="訓練">訓練</option>
-<option value="警戒">警戒</option>
-<option value="点検等">点検等</option>
-</select>
-</div>
-<div class="form-group">
-<label for="driver">運転者</label>
-<select id="driver">
-<option value="">選択してください</option>
-</select>
-</div>
-<div class="form-group">
-<label for="leader">筆頭</label>
-<select id="leader">
-<option value="">選択してください</option>
-</select>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label for="meterDistance">メーター距離数 (km)</label>
-<input id="meterDistance" placeholder="例: 910" step="0.1" type="number"/>
-</div>
-<div class="form-group">
-<label for="fuelAmount">給油量 (L)</label>
-<input id="fuelAmount" placeholder="例: 25.5" step="0.1" type="number"/>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label for="operationStart">運行開始</label>
-<input id="operationStart" onchange="syncTimes('operation')" type="time"/>
-</div>
-<div class="form-group">
-<label for="operationEnd">運行終了</label>
-<input id="operationEnd" onchange="syncTimes('operation')" type="time"/>
-</div>
-</div>
-<div class="form-group">
-<label for="vehicleMemo">備考</label>
-<textarea id="vehicleMemo" placeholder="車両・運転に関する備考を入力してください" rows="2"></textarea>
-</div>
-</div>
-<div class="form-group">
-<label for="activityMemo">活動メモ</label>
-<textarea id="activityMemo" placeholder="活動の詳細を入力してください" rows="3"></textarea>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label for="startTime">開始時刻</label>
-<input id="startTime" onchange="syncTimes('activity')" required="" type="time"/>
-</div>
-<div class="form-group">
-<label for="endTime">終了時刻</label>
-<input id="endTime" onchange="syncTimes('activity')" required="" type="time"/>
-</div>
-</div>
-<div class="form-group">
-<label>出動人員</label>
-<div class="member-grid" id="memberSelection">
-<!-- 団員選択グリッドがここに表示されます -->
-</div>
-</div>
-<button class="btn btn-success" type="submit">活動を登録</button>
-</form>
+<h3>📝 新規活動報告</h3>
+<p>活動報告機能は準備中です。</p>
 </div>
 </div>
 <div class="tab-content" id="activity-list">
-<div class="activity-filters">
-<div class="form-group" style="margin-bottom: 0;">
-<label for="sortOrder">並び順:</label>
-<select id="sortOrder" onchange="filterActivities()">
-<option value="newest">新しい順</option>
-<option value="oldest">古い順</option>
-</select>
-</div>
-<div class="form-group" style="margin-bottom: 0;">
-<label for="activityTypeFilter">運行内容:</label>
-<select id="activityTypeFilter" onchange="filterActivities()">
-<option value="">全て</option>
-<option value="火災">火災</option>
-<option value="訓練">訓練</option>
-<option value="警戒">警戒</option>
-<option value="点検等">点検等</option>
-</select>
-</div>
-<div class="form-group" style="margin-bottom: 0;">
-<label for="contentFilter">活動内容:</label>
-<input id="contentFilter" onchange="filterActivities()" placeholder="検索キーワード" type="text"/>
-</div>
-</div>
-<div id="activityList">
-<!-- 活動カードがここに表示されます -->
+<div class="card">
+<h3>📋 活動一覧</h3>
+<p>活動一覧機能は準備中です。</p>
 </div>
 </div>
 <div class="tab-content" id="members">
 <div class="card">
-<h3>📋 団員一覧</h3>
-<div id="membersList">
-<!-- 団員カードがここに表示されます -->
+<h3>👥 団員管理</h3>
+<p>団員管理機能は準備中です。</p>
 </div>
 </div>
 </div>
-<div id="adminArea">
-<h4>🔧 管理者機能</h4>
-<button class="admin-btn" onclick="backupData()">データバックアップ</button>
-<button class="admin-btn" onclick="restoreData()">データ復元</button>
-<button class="admin-btn" onclick="clearAllData()" style="background: #dc3545; color: white;">全データクリア</button>
-<button class="admin-btn" onclick="migrateLocalData()">ローカルデータ移行</button>
-</div>
-</div>
-<!-- モーダル -->
-<div class="modal" id="memberActivityModal">
-<div class="modal-content">
-<div class="modal-header">
-<h3 id="modalMemberName">団員活動履歴</h3>
-<span class="close" onclick="closeModal()">×</span>
-</div>
-<div id="modalContent">
-<!-- 活動履歴がここに表示されます -->
-</div>
-</div>
-</div>
-<div class="modal" id="memberEditModal">
-<div class="modal-content">
-<div class="modal-header">
-<h3>団員情報編集</h3>
-<span class="close" onclick="closeEditModal()">×</span>
-</div>
-<form id="memberEditForm">
-<div class="form-group">
-<label>ID</label>
-<input id="editMemberId" readonly="" style="background: #f5f5f5;" type="text"/>
-</div>
-<div class="form-group">
-<label>氏名</label>
-<input id="editMemberName" readonly="" style="background: #f5f5f5;" type="text"/>
-</div>
-<div class="form-group">
-<label for="editMemberRole">役職</label>
-<select id="editMemberRole" required="">
-<option value="副分団長">副分団長</option>
-<option value="部長">部長</option>
-<option value="副部長">副部長</option>
-<option value="班長">班長</option>
-<option value="機能別">機能別</option>
-</select>
-</div>
-<div class="form-group">
-<label for="editMemberNickname">略称</label>
-<input id="editMemberNickname" required="" type="text"/>
-</div>
-<div class="form-group">
-<label>出欠カウント</label>
-<div class="radio-group">
-<label>
-<input name="editMemberExcluded" type="radio" value="false"/> 除外しない
-                        </label>
-<label>
-<input name="editMemberExcluded" type="radio" value="true"/> 除外する
-                        </label>
-</div>
-</div>
-<div class="form-group">
-<label>管理者権限</label>
-<div class="radio-group">
-<label>
-<input name="editMemberAdmin" type="radio" value="false"/> なし
-                        </label>
-<label>
-<input name="editMemberAdmin" type="radio" value="true"/> あり
-                        </label>
-</div>
-</div>
-<div style="display: flex; gap: 1rem; margin-top: 1rem;">
-<button class="btn btn-primary" type="submit">保存</button>
-<button class="btn btn-warning" onclick="resetMemberPassword()" type="button">パスワードリセット</button>
-<button class="btn btn-secondary" onclick="closeEditModal()" type="button">キャンセル</button>
-</div>
-</form>
-</div>
-</div>
-
-<!-- Firebase SDK -->
-<script type="module">
-    // Firebase設定
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getDatabase, ref, set, get, push, remove, onValue, off } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
-
-    // Firebase設定（実際のプロジェクト設定に置き換える）
-    const firebaseConfig = {
-        apiKey: "AIzaSyDummy-Replace-With-Real-Config",
-        authDomain: "fire-corps-system.firebaseapp.com",
-        databaseURL: "https://fire-corps-system-default-rtdb.firebaseio.com",
-        projectId: "fire-corps-system",
-        storageBucket: "fire-corps-system.appspot.com",
-        messagingSenderId: "123456789",
-        appId: "1:123456789:web:abcdef123456"
-    };
-
-    // Firebase初期化
-    let app, database;
-    let isFirebaseConnected = false;
-
-    try {
-        app = initializeApp(firebaseConfig);
-        database = getDatabase(app);
-        isFirebaseConnected = true;
-        updateSyncStatus('connected', '✅ 同期済み');
-    } catch (error) {
-        console.warn('Firebase接続失敗、ローカルモードで動作:', error);
-        isFirebaseConnected = false;
-        updateSyncStatus('error', '⚠️ オフライン');
-    }
-
-    // グローバル変数として公開
-    window.firebaseDB = {
-        database,
-        ref,
-        set,
-        get,
-        push,
-        remove,
-        onValue,
-        off,
-        isConnected: () => isFirebaseConnected
-    };
-
-    // 同期ステータス更新
-    function updateSyncStatus(status, text) {
-        const syncStatus = document.getElementById('syncStatus');
-        if (syncStatus) {
-            syncStatus.textContent = text;
-            syncStatus.className = 'sync-status ' + status;
-        }
-    }
-
-    window.updateSyncStatus = updateSyncStatus;
-</script>
 
 <script>
         // データ保存用のキー
         const STORAGE_KEYS = {
-            activities: 'fireCorps_activities',
-            members: 'fireCorps_members',
-            attendance: 'fireCorps_attendance',
             passwords: 'fireCorps_passwords'
-        };
-
-        // Firebase パス
-        const FIREBASE_PATHS = {
-            activities: 'activities',
-            attendance: 'attendance',
-            passwords: 'passwords'
         };
 
         // 現在のユーザー
         let currentUser = null;
-        let currentEditingMember = null;
 
-        // 実際のExcelデータから取得した団員リスト（管理者権限を部長・副部長に付与）
+        // 団員リスト
         const members = [
-            { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', phone: '', email: '', isAdmin: true, isExcluded: false },
-            { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', phone: '', email: '', isAdmin: true, isExcluded: false },
-            { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', phone: '', email: '', isAdmin: true, isExcluded: false },
-            { id: 'No4', name: '田中秀和', role: '班長', nickname: '田中', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No7', name: '春沢裕', role: '班長', nickname: '春沢', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No8', name: '宮林傑', role: '班長', nickname: '傑', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No9', name: '小島佑大', role: '班長', nickname: '小島', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No10', name: '土肥美樹', role: '班長', nickname: '土肥', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No11', name: '相沢守', role: '班長', nickname: '相沢', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No12', name: '青木理', role: '機能別', nickname: '青木', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No1', name: '新居寛之', role: '機能別', nickname: '新居', phone: '', email: '', isAdmin: false, isExcluded: false },
-            { id: 'No2', name: '竪月志朗', role: '機能別', nickname: '竪月', phone: '', email: '', isAdmin: false, isExcluded: false }
+            { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', isAdmin: true },
+            { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', isAdmin: true },
+            { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', isAdmin: true },
+            { id: 'No4', name: '田中秀和', role: '班長', nickname: '田中', isAdmin: false },
+            { id: 'No7', name: '春沢裕', role: '班長', nickname: '春沢', isAdmin: false },
+            { id: 'No8', name: '宮林傑', role: '班長', nickname: '傑', isAdmin: false },
+            { id: 'No9', name: '小島佑大', role: '班長', nickname: '小島', isAdmin: false },
+            { id: 'No10', name: '土肥美樹', role: '班長', nickname: '土肥', isAdmin: false },
+            { id: 'No11', name: '相沢守', role: '班長', nickname: '相沢', isAdmin: false },
+            { id: 'No12', name: '青木理', role: '機能別', nickname: '青木', isAdmin: false },
+            { id: 'No1', name: '新居寛之', role: '機能別', nickname: '新居', isAdmin: false },
+            { id: 'No2', name: '竪月志朗', role: '機能別', nickname: '竪月', isAdmin: false }
         ];
-
-        // 実際のExcelデータから取得した活動データ
-        const initialActivities = [
-            {
-                id: '7d6ac393',
-                date: '2026-03-01',
-                content: '出火報',
-                type: '',
-                vehicleDispatch: false,
-                driver: '',
-                leader: '',
-                meterDistance: '',
-                fuelAmount: '',
-                operationStart: '',
-                operationEnd: '',
-                vehicleMemo: '',
-                memo: '',
-                startTime: '09:00',
-                endTime: '12:00',
-                participants: ['No1', 'No2', 'No3', 'No6', 'No11'],
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            },
-            {
-                id: '1f5e06e2',
-                date: '2026-03-01',
-                content: '警戒・部会',
-                type: '警戒',
-                vehicleDispatch: true,
-                driver: 'No11',
-                leader: 'No2',
-                meterDistance: '874',
-                fuelAmount: '',
-                operationStart: '14:00',
-                operationEnd: '17:00',
-                vehicleMemo: '',
-                memo: '',
-                startTime: '14:00',
-                endTime: '17:00',
-                participants: ['No1', 'No2', 'No3', 'No5', 'No6', 'No7', 'No11'],
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            },
-            {
-                id: '9ac67c99',
-                date: '2026-03-02',
-                content: '車両給油',
-                type: '点検等',
-                vehicleDispatch: true,
-                driver: 'No6',
-                leader: '',
-                meterDistance: '878',
-                fuelAmount: '',
-                operationStart: '10:00',
-                operationEnd: '11:00',
-                vehicleMemo: '',
-                memo: '',
-                startTime: '10:00',
-                endTime: '11:00',
-                participants: ['No6'],
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            },
-            {
-                id: 'fd9f390d',
-                date: '2026-03-01',
-                content: 'パレード・水利点検',
-                type: '訓練',
-                vehicleDispatch: true,
-                driver: 'No1',
-                leader: 'No2',
-                meterDistance: '857',
-                fuelAmount: '',
-                operationStart: '08:00',
-                operationEnd: '12:00',
-                vehicleMemo: '',
-                memo: '',
-                startTime: '08:00',
-                endTime: '12:00',
-                participants: ['No1', 'No2', 'No3', 'No5', 'No6', 'No7', 'No11'],
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            },
-            {
-                id: 'a0ad3012',
-                date: '2026-04-05',
-                content: '入退団式',
-                type: '訓練',
-                vehicleDispatch: true,
-                driver: 'No10',
-                leader: 'No5',
-                meterDistance: '910',
-                fuelAmount: '',
-                operationStart: '10:00',
-                operationEnd: '15:00',
-                vehicleMemo: '',
-                memo: '',
-                startTime: '10:00',
-                endTime: '15:00',
-                participants: ['No5', 'No3', 'No6', 'No4', 'No7', 'No10', 'No11'],
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            }
-        ];
-
-        // 実際のExcelデータから取得した出席データ
-        const initialAttendance = [
-            {
-                id: '21232c49',
-                activityId: '1f5e06e2',
-                activityTitle: '警戒・部会',
-                memberId: 'No1',
-                memberName: '新居寛之',
-                startTime: '14:00',
-                endTime: '17:00',
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            },
-            {
-                id: 'a7e266e5',
-                activityId: '45889a2a',
-                activityTitle: '警戒',
-                memberId: 'No2',
-                memberName: '竪月志朗',
-                startTime: '19:00',
-                endTime: '22:00',
-                createdAt: new Date().toISOString(),
-                createdBy: 'system'
-            }
-        ];
-
-        // Firebase データ操作関数
-        async function saveToFirebase(path, data) {
-            if (!window.firebaseDB.isConnected()) {
-                return false;
-            }
-            
-            try {
-                updateSyncStatus('syncing', '🔄 同期中...');
-                const dbRef = window.firebaseDB.ref(window.firebaseDB.database, path);
-                await window.firebaseDB.set(dbRef, data);
-                updateSyncStatus('connected', '✅ 同期済み');
-                return true;
-            } catch (error) {
-                console.error('Firebase保存エラー:', error);
-                updateSyncStatus('error', '❌ 同期失敗');
-                return false;
-            }
-        }
-
-        async function loadFromFirebase(path) {
-            if (!window.firebaseDB.isConnected()) {
-                return null;
-            }
-            
-            try {
-                const dbRef = window.firebaseDB.ref(window.firebaseDB.database, path);
-                const snapshot = await window.firebaseDB.get(dbRef);
-                return snapshot.exists() ? snapshot.val() : null;
-            } catch (error) {
-                console.error('Firebase読み込みエラー:', error);
-                return null;
-            }
-        }
-
-        async function addToFirebase(path, data) {
-            if (!window.firebaseDB.isConnected()) {
-                return null;
-            }
-            
-            try {
-                updateSyncStatus('syncing', '🔄 同期中...');
-                const dbRef = window.firebaseDB.ref(window.firebaseDB.database, path);
-                const newRef = await window.firebaseDB.push(dbRef, data);
-                updateSyncStatus('connected', '✅ 同期済み');
-                return newRef.key;
-            } catch (error) {
-                console.error('Firebase追加エラー:', error);
-                updateSyncStatus('error', '❌ 同期失敗');
-                return null;
-            }
-        }
-
-        // データ保存（Firebase + ローカル）
-        async function saveData(key, data) {
-            // ローカルストレージに保存
-            localStorage.setItem(key, JSON.stringify(data));
-            
-            // Firebaseに保存
-            const firebasePath = FIREBASE_PATHS[key.replace('fireCorps_', '')];
-            if (firebasePath) {
-                await saveToFirebase(firebasePath, data);
-            }
-        }
-
-        // データ読み込み（Firebase優先、フォールバックでローカル）
-        async function loadData(key) {
-            const firebasePath = FIREBASE_PATHS[key.replace('fireCorps_', '')];
-            
-            if (firebasePath) {
-                const firebaseData = await loadFromFirebase(firebasePath);
-                if (firebaseData) {
-                    // Firebaseデータをローカルにも保存
-                    localStorage.setItem(key, JSON.stringify(firebaseData));
-                    return firebaseData;
-                }
-            }
-            
-            // フォールバック: ローカルストレージから読み込み
-            const localData = localStorage.getItem(key);
-            return localData ? JSON.parse(localData) : null;
-        }
 
         // パスワード管理
-        async function initializePasswords() {
-            let passwords = await loadData(STORAGE_KEYS.passwords) || {};
+        function initializePasswords() {
+            let passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
             
             members.forEach(member => {
                 if (!passwords[member.name]) {
@@ -1296,7 +387,7 @@
                 }
             });
             
-            await saveData(STORAGE_KEYS.passwords, passwords);
+            localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
             return passwords;
         }
 
@@ -1314,7 +405,7 @@
         }
 
         // パスワード設定フォームの処理
-        document.getElementById('passwordSetupForm').addEventListener('submit', async function(e) {
+        document.getElementById('passwordSetupForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const setupId = document.getElementById('setupId').value.replace(/\s+/g, '');
@@ -1337,76 +428,20 @@
                 return;
             }
             
-            const passwords = await loadData(STORAGE_KEYS.passwords) || {};
+            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
             passwords[user.name] = {
                 password: newPassword,
                 isDefault: false,
                 lastChanged: new Date().toISOString()
             };
-            await saveData(STORAGE_KEYS.passwords, passwords);
+            localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
             
             alert('パスワードが設定されました！ログイン画面に戻ります。');
             showLogin();
         });
 
-        // 初期化
-        async function init() {
-            await initializePasswords();
-            await loadInitialData();
-            updateDashboard();
-            displayMembers();
-            displayActivityList();
-            setupMemberSelection();
-            setupDriverLeaderSelects();
-            setInitialMeterDistance();
-            
-            // Firebase リアルタイム同期の設定
-            setupRealtimeSync();
-        }
-
-        // 初期データの読み込み
-        async function loadInitialData() {
-            let activities = await loadData(STORAGE_KEYS.activities);
-            let attendance = await loadData(STORAGE_KEYS.attendance);
-            
-            if (!activities || activities.length === 0) {
-                await saveData(STORAGE_KEYS.activities, initialActivities);
-            }
-            
-            if (!attendance || attendance.length === 0) {
-                await saveData(STORAGE_KEYS.attendance, initialAttendance);
-            }
-        }
-
-        // リアルタイム同期の設定
-        function setupRealtimeSync() {
-            if (!window.firebaseDB.isConnected()) {
-                return;
-            }
-
-            // 活動データの同期
-            const activitiesRef = window.firebaseDB.ref(window.firebaseDB.database, FIREBASE_PATHS.activities);
-            window.firebaseDB.onValue(activitiesRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(data));
-                    updateDashboard();
-                    displayActivityList();
-                }
-            });
-
-            // 出席データの同期
-            const attendanceRef = window.firebaseDB.ref(window.firebaseDB.database, FIREBASE_PATHS.attendance);
-            window.firebaseDB.onValue(attendanceRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    localStorage.setItem(STORAGE_KEYS.attendance, JSON.stringify(data));
-                }
-            });
-        }
-
         // ログイン処理
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
             const password = document.getElementById('password').value;
@@ -1417,7 +452,7 @@
                 return;
             }
 
-            const passwords = await loadData(STORAGE_KEYS.passwords) || {};
+            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
             const userPassword = passwords[user.name];
             
             if (!userPassword || userPassword.password !== password) {
@@ -1429,12 +464,6 @@
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = user.name + 'さん';
-            
-            if (user.isAdmin) {
-                document.getElementById('adminArea').style.display = 'block';
-            }
-            
-            await init();
         });
 
         // ログアウト
@@ -1443,7 +472,6 @@
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('passwordSetupContainer').style.display = 'none';
-            document.getElementById('adminArea').style.display = 'none';
             document.getElementById('loginForm').reset();
         }
 
@@ -1459,614 +487,10 @@
             event.target.classList.add('active');
         }
 
-        // 直近の車両出動のメーター距離数を取得して初期設定
-        async function setInitialMeterDistance() {
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            const vehicleActivities = activities.filter(a => a.vehicleDispatch && a.meterDistance);
-            
-            if (vehicleActivities.length > 0) {
-                // 日付順でソートして最新を取得
-                vehicleActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
-                const latestDistance = vehicleActivities[0].meterDistance;
-                document.getElementById('meterDistance').value = latestDistance;
-            }
-        }
-
-        // 時刻の同期
-        function syncTimes(source) {
-            if (source === 'operation') {
-                const operationStart = document.getElementById('operationStart').value;
-                const operationEnd = document.getElementById('operationEnd').value;
-                
-                if (operationStart && !document.getElementById('startTime').value) {
-                    document.getElementById('startTime').value = operationStart;
-                }
-                if (operationEnd && !document.getElementById('endTime').value) {
-                    document.getElementById('endTime').value = operationEnd;
-                }
-                
-                // 個別時間の初期値も同期
-                updateIndividualTimes();
-            } else if (source === 'activity') {
-                const startTime = document.getElementById('startTime').value;
-                const endTime = document.getElementById('endTime').value;
-                
-                if (startTime && !document.getElementById('operationStart').value) {
-                    document.getElementById('operationStart').value = startTime;
-                }
-                if (endTime && !document.getElementById('operationEnd').value) {
-                    document.getElementById('operationEnd').value = endTime;
-                }
-                
-                // 個別時間の初期値も同期
-                updateIndividualTimes();
-            }
-        }
-
-        // 個別時間の初期値を活動時刻と同期
-        function updateIndividualTimes() {
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
-            
-            members.forEach(member => {
-                const startInput = document.getElementById(`startTime-${member.id}`);
-                const endInput = document.getElementById(`endTime-${member.id}`);
-                
-                if (startInput && !startInput.value && startTime) {
-                    startInput.value = startTime;
-                }
-                if (endInput && !endInput.value && endTime) {
-                    endInput.value = endTime;
-                }
-            });
-        }
-
-        // ダッシュボードの更新
-        async function updateDashboard() {
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            const year = document.getElementById('periodYear').value;
-            const month = document.getElementById('periodMonth').value;
-            
-            // 年度の範囲を計算（4月〜翌3月）
-            const fiscalYearStart = `${year}-04-01`;
-            const fiscalYearEnd = `${parseInt(year) + 1}-03-31`;
-            
-            // 年度内の活動をフィルタ
-            const fiscalYearActivities = activities.filter(a => 
-                a.date >= fiscalYearStart && a.date <= fiscalYearEnd
-            );
-            
-            // 月間活動をフィルタ
-            let monthlyActivities = fiscalYearActivities;
-            let displayActivities = fiscalYearActivities; // 最近の活動表示用
-            
-            if (month) {
-                const monthStr = year + '-' + month;
-                monthlyActivities = fiscalYearActivities.filter(a => a.date.startsWith(monthStr));
-                displayActivities = monthlyActivities; // 期間選択時は選択期間の活動を表示
-            }
-            
-            // 団活動（車両出動ありの活動）をフィルタ
-            const monthlyGroupActivities = monthlyActivities.filter(a => a.vehicleDispatch);
-            const yearlyGroupActivities = fiscalYearActivities.filter(a => a.vehicleDispatch);
-            
-            // 統計を更新
-            document.getElementById('monthlyActivities').textContent = monthlyActivities.length;
-            document.getElementById('yearlyActivities').textContent = `年間: ${fiscalYearActivities.length}回`;
-            document.getElementById('monthlyGroupActivities').textContent = monthlyGroupActivities.length;
-            document.getElementById('yearlyGroupActivities').textContent = `年間: ${yearlyGroupActivities.length}回`;
-            document.getElementById('registeredMembers').textContent = members.filter(m => !m.isExcluded).length;
-            
-            // 最近の活動表示（表示期間に連動）
-            const recentActivities = displayActivities.slice(-5).reverse();
-            const recentActivitiesHtml = recentActivities.map(activity => `
-                <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                    <strong>${activity.content}</strong> (${activity.date})
-                    <br><small>${activity.type || '種別なし'} - ${activity.startTime}〜${activity.endTime} - 参加者${activity.participants.length}名</small>
-                </div>
-            `).join('');
-            
-            document.getElementById('recentActivities').innerHTML = recentActivitiesHtml || '<p>選択期間に活動データがありません。</p>';
-        }
-
-        // 車両出動セクションの表示切り替え
-        function toggleVehicleSection() {
-            const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
-            const vehicleSection = document.getElementById('vehicleSection');
-            
-            if (vehicleDispatch) {
-                vehicleSection.classList.add('show');
-                setInitialMeterDistance();
-            } else {
-                vehicleSection.classList.remove('show');
-            }
-        }
-
-        // 団員選択グリッドの設定（スリム化・スマホ対応）
-        function setupMemberSelection() {
-            const memberSelection = document.getElementById('memberSelection');
-            const activeMembersHtml = members.filter(m => !m.isExcluded).map(member => `
-                <div class="member-item" data-member-id="${member.id}">
-                    <div class="member-name">${member.nickname}</div>
-                    <div class="member-checkboxes">
-                        <label>
-                            <input type="checkbox" onchange="toggleMemberAttendance('${member.id}')"> 出席
-                        </label>
-                        <label style="display: none;" id="timeLabel-${member.id}">
-                            <input type="checkbox" onchange="toggleIndividualTime('${member.id}')"> 個別時間登録
-                        </label>
-                    </div>
-                    <div class="individual-time-inputs" id="individualTime-${member.id}">
-                        <input type="time" placeholder="開始" id="startTime-${member.id}">
-                        <input type="time" placeholder="終了" id="endTime-${member.id}">
-                    </div>
-                </div>
-            `).join('');
-            
-            memberSelection.innerHTML = activeMembersHtml;
-        }
-
-        // 運転者・筆頭の選択肢を設定
-        function setupDriverLeaderSelects() {
-            const driverSelect = document.getElementById('driver');
-            const leaderSelect = document.getElementById('leader');
-            
-            const options = members.filter(m => !m.isExcluded).map(member => 
-                `<option value="${member.id}">${member.name}</option>`
-            ).join('');
-            
-            driverSelect.innerHTML = '<option value="">選択してください</option>' + options;
-            leaderSelect.innerHTML = '<option value="">選択してください</option>' + options;
-        }
-
-        // 団員出席の切り替え
-        function toggleMemberAttendance(memberId) {
-            const memberItem = document.querySelector(`[data-member-id="${memberId}"]`);
-            const attendanceCheckbox = event.target;
-            const timeLabel = document.getElementById(`timeLabel-${memberId}`);
-            
-            if (attendanceCheckbox.checked) {
-                memberItem.classList.add('selected');
-                timeLabel.style.display = 'block';
-            } else {
-                memberItem.classList.remove('selected');
-                timeLabel.style.display = 'none';
-                // 個別時間もリセット
-                const timeCheckbox = timeLabel.querySelector('input[type="checkbox"]');
-                timeCheckbox.checked = false;
-                const timeInputs = document.getElementById(`individualTime-${memberId}`);
-                timeInputs.classList.remove('show');
-            }
-        }
-
-        // 個別時間入力の切り替え
-        function toggleIndividualTime(memberId) {
-            const checkbox = event.target;
-            const timeInputs = document.getElementById(`individualTime-${memberId}`);
-            
-            if (checkbox.checked) {
-                timeInputs.classList.add('show');
-                // 活動時刻と同期
-                const startTime = document.getElementById('startTime').value;
-                const endTime = document.getElementById('endTime').value;
-                
-                if (startTime) {
-                    document.getElementById(`startTime-${memberId}`).value = startTime;
-                }
-                if (endTime) {
-                    document.getElementById(`endTime-${memberId}`).value = endTime;
-                }
-            } else {
-                timeInputs.classList.remove('show');
-            }
-        }
-
-        // 活動報告フォームの処理
-        document.getElementById('activityForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            const attendance = await loadData(STORAGE_KEYS.attendance) || [];
-            
-            const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
-            
-            // 出席チェックされた団員を取得
-            const selectedMembers = [];
-            members.forEach(member => {
-                const attendanceCheckbox = document.querySelector(`[data-member-id="${member.id}"] input[type="checkbox"]`);
-                if (attendanceCheckbox && attendanceCheckbox.checked) {
-                    selectedMembers.push(member.id);
-                }
-            });
-            
-            if (selectedMembers.length === 0) {
-                alert('出動人員を選択してください。');
-                return;
-            }
-            
-            const newActivity = {
-                id: Date.now().toString(),
-                date: document.getElementById('activityDate').value,
-                content: document.getElementById('activityContent').value,
-                type: vehicleDispatch ? document.getElementById('activityType').value : '',
-                vehicleDispatch: vehicleDispatch,
-                driver: vehicleDispatch ? document.getElementById('driver').value : '',
-                leader: vehicleDispatch ? document.getElementById('leader').value : '',
-                meterDistance: vehicleDispatch ? document.getElementById('meterDistance').value : '',
-                fuelAmount: vehicleDispatch ? document.getElementById('fuelAmount').value : '',
-                operationStart: vehicleDispatch ? document.getElementById('operationStart').value : '',
-                operationEnd: vehicleDispatch ? document.getElementById('operationEnd').value : '',
-                vehicleMemo: vehicleDispatch ? document.getElementById('vehicleMemo').value : '',
-                memo: document.getElementById('activityMemo').value,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                participants: selectedMembers,
-                createdAt: new Date().toISOString(),
-                createdBy: currentUser ? currentUser.name : 'unknown'
-            };
-            
-            activities.push(newActivity);
-            await saveData(STORAGE_KEYS.activities, activities);
-            
-            // 個別時間が設定された団員の出席記録を作成
-            for (const memberId of selectedMembers) {
-                const member = members.find(m => m.id === memberId);
-                const timeLabel = document.getElementById(`timeLabel-${memberId}`);
-                const timeCheckbox = timeLabel.querySelector('input[type="checkbox"]');
-                
-                if (timeCheckbox && timeCheckbox.checked) {
-                    const startTime = document.getElementById(`startTime-${memberId}`).value;
-                    const endTime = document.getElementById(`endTime-${memberId}`).value;
-                    
-                    if (startTime && endTime) {
-                        const newAttendance = {
-                            id: Date.now().toString() + '-' + memberId,
-                            activityId: newActivity.id,
-                            activityTitle: newActivity.content,
-                            memberId: memberId,
-                            memberName: member.name,
-                            startTime: startTime,
-                            endTime: endTime,
-                            createdAt: new Date().toISOString(),
-                            createdBy: currentUser ? currentUser.name : 'unknown'
-                        };
-                        
-                        attendance.push(newAttendance);
-                    }
-                }
-            }
-            
-            await saveData(STORAGE_KEYS.attendance, attendance);
-            
-            this.reset();
-            setupMemberSelection();
-            updateDashboard();
-            displayActivityList();
-            
-            alert('活動が記録されました！');
-        });
-
-        // 活動一覧の表示
-        async function displayActivityList() {
-            await filterActivities();
-        }
-
-        // 活動のフィルタリング
-        async function filterActivities() {
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            const sortOrder = document.getElementById('sortOrder').value;
-            const typeFilter = document.getElementById('activityTypeFilter').value;
-            const contentFilter = document.getElementById('contentFilter').value.toLowerCase();
-            
-            let filteredActivities = activities.filter(activity => {
-                const typeMatch = !typeFilter || activity.type === typeFilter;
-                const contentMatch = !contentFilter || activity.content.toLowerCase().includes(contentFilter);
-                return typeMatch && contentMatch;
-            });
-            
-            // ソート
-            if (sortOrder === 'newest') {
-                filteredActivities.sort((a, b) => new Date(b.date) - new Date(a.date));
-            } else {
-                filteredActivities.sort((a, b) => new Date(a.date) - new Date(b.date));
-            }
-            
-            const activityListHtml = filteredActivities.map(activity => `
-                <div class="activity-card">
-                    <div class="activity-header">
-                        <div class="activity-date">${activity.date}</div>
-                        ${activity.vehicleDispatch ? '<span style="color: red;">🚗</span>' : ''}
-                        ${activity.createdBy ? `<small style="color: #666;">登録者: ${activity.createdBy}</small>` : ''}
-                    </div>
-                    <div class="activity-title">${activity.content}</div>
-                    <div class="activity-tags">
-                        ${activity.type ? `<span class="activity-tag">${activity.type}</span>` : ''}
-                        ${activity.vehicleDispatch ? '<span class="activity-tag">車両出動</span>' : ''}
-                    </div>
-                    <div class="activity-info">
-                        <span>参加者: ${activity.participants.length}名</span>
-                        <span>時間: ${activity.startTime}〜${activity.endTime}</span>
-                        ${activity.driver ? `<span>運転: ${members.find(m => m.id === activity.driver)?.name || activity.driver}</span>` : ''}
-                    </div>
-                    <div class="activity-actions">
-                        <button class="btn btn-warning">詳細</button>
-                        ${currentUser && currentUser.isAdmin ? `<button class="btn btn-danger" onclick="deleteActivity('${activity.id}')">削除</button>` : ''}
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('activityList').innerHTML = activityListHtml || '<p>該当する活動がありません。</p>';
-        }
-
-        // 団員一覧の表示
-        async function displayMembers() {
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            
-            const activeMembersHtml = members.filter(m => !m.isExcluded).map(member => {
-                const memberActivities = activities.filter(a => a.participants.includes(member.id));
-                
-                return `
-                    <div class="member-card">
-                        <div class="member-header">
-                            <div class="member-info">
-                                <div style="font-weight: bold; font-size: 1.1rem;">${member.name}</div>
-                                <div style="color: #666;">${member.role} - ${member.nickname}</div>
-                                <div class="member-stats">参加活動: ${memberActivities.length}回</div>
-                            </div>
-                            <div class="member-actions">
-                                <button class="btn btn-warning" onclick="showMemberActivities('${member.id}')">活動確認</button>
-                                ${currentUser && currentUser.isAdmin ? `<button class="btn btn-primary" onclick="editMember('${member.id}')">編集</button>` : ''}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            document.getElementById('membersList').innerHTML = activeMembersHtml;
-        }
-
-        // 団員の活動履歴を表示
-        async function showMemberActivities(memberId) {
-            const member = members.find(m => m.id === memberId);
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            const memberActivities = activities.filter(a => a.participants.includes(memberId));
-            
-            document.getElementById('modalMemberName').textContent = `${member.name}さんの活動履歴`;
-            
-            const activitiesHtml = memberActivities.map(activity => `
-                <div style="padding: 1rem; border-bottom: 1px solid #eee;">
-                    <div style="font-weight: bold;">${activity.content}</div>
-                    <div style="color: #666; font-size: 0.9rem;">
-                        ${activity.date} ${activity.startTime}〜${activity.endTime}
-                        ${activity.type ? ` | ${activity.type}` : ''}
-                        ${activity.vehicleDispatch ? ' | 車両出動' : ''}
-                        ${activity.createdBy ? ` | 登録者: ${activity.createdBy}` : ''}
-                    </div>
-                </div>
-            `).join('');
-            
-            document.getElementById('modalContent').innerHTML = activitiesHtml || '<p>参加した活動がありません。</p>';
-            document.getElementById('memberActivityModal').style.display = 'block';
-        }
-
-        // 団員編集
-        function editMember(memberId) {
-            if (!currentUser || !currentUser.isAdmin) {
-                alert('管理者権限が必要です。');
-                return;
-            }
-            
-            const member = members.find(m => m.id === memberId);
-            currentEditingMember = member;
-            
-            document.getElementById('editMemberId').value = member.id;
-            document.getElementById('editMemberName').value = member.name;
-            document.getElementById('editMemberRole').value = member.role;
-            document.getElementById('editMemberNickname').value = member.nickname;
-            
-            // ラジオボタンの設定
-            const excludedRadios = document.querySelectorAll('input[name="editMemberExcluded"]');
-            excludedRadios.forEach(radio => {
-                radio.checked = radio.value === member.isExcluded.toString();
-            });
-            
-            const adminRadios = document.querySelectorAll('input[name="editMemberAdmin"]');
-            adminRadios.forEach(radio => {
-                radio.checked = radio.value === member.isAdmin.toString();
-            });
-            
-            document.getElementById('memberEditModal').style.display = 'block';
-        }
-
-        // 団員編集フォームの処理
-        document.getElementById('memberEditForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (!currentEditingMember) return;
-            
-            currentEditingMember.role = document.getElementById('editMemberRole').value;
-            currentEditingMember.nickname = document.getElementById('editMemberNickname').value;
-            
-            // ラジオボタンの値を取得
-            const excludedValue = document.querySelector('input[name="editMemberExcluded"]:checked').value;
-            currentEditingMember.isExcluded = excludedValue === 'true';
-            
-            const adminValue = document.querySelector('input[name="editMemberAdmin"]:checked').value;
-            currentEditingMember.isAdmin = adminValue === 'true';
-            
-            displayMembers();
-            setupMemberSelection();
-            setupDriverLeaderSelects();
-            closeEditModal();
-            
-            alert('団員情報を更新しました。');
-        });
-
-        // パスワードリセット
-        async function resetMemberPassword() {
-            if (!currentEditingMember) return;
-            
-            if (confirm(`${currentEditingMember.name}さんのパスワードをリセットしますか？\n\n注意: パスワードのリセットは本人に確認してから実行してください。`)) {
-                const passwords = await loadData(STORAGE_KEYS.passwords) || {};
-                passwords[currentEditingMember.name] = {
-                    password: 'password',
-                    isDefault: true,
-                    lastChanged: new Date().toISOString()
-                };
-                await saveData(STORAGE_KEYS.passwords, passwords);
-                
-                alert('パスワードを初期値（password）にリセットしました。');
-            }
-        }
-
-        // 活動削除
-        async function deleteActivity(id) {
-            if (!currentUser || !currentUser.isAdmin) {
-                alert('管理者権限が必要です。');
-                return;
-            }
-            
-            if (confirm('この活動を削除しますか？')) {
-                const activities = await loadData(STORAGE_KEYS.activities) || [];
-                const filteredActivities = activities.filter(a => a.id !== id);
-                await saveData(STORAGE_KEYS.activities, filteredActivities);
-                
-                // 関連する出席記録も削除
-                const attendance = await loadData(STORAGE_KEYS.attendance) || [];
-                const filteredAttendance = attendance.filter(a => a.activityId !== id);
-                await saveData(STORAGE_KEYS.attendance, filteredAttendance);
-                
-                displayActivityList();
-                updateDashboard();
-            }
-        }
-
-        // モーダル関連
-        function closeModal() {
-            document.getElementById('memberActivityModal').style.display = 'none';
-        }
-
-        function closeEditModal() {
-            document.getElementById('memberEditModal').style.display = 'none';
-            currentEditingMember = null;
-        }
-
-        // データエクスポート
-        async function exportData() {
-            const activities = await loadData(STORAGE_KEYS.activities) || [];
-            const attendance = await loadData(STORAGE_KEYS.attendance) || [];
-            const passwords = await loadData(STORAGE_KEYS.passwords) || {};
-            
-            const exportData = {
-                activities: activities,
-                members: members,
-                attendance: attendance,
-                passwords: passwords,
-                exportDate: new Date().toISOString()
-            };
-            
-            const dataStr = JSON.stringify(exportData, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(dataBlob);
-            link.download = `消防団データ_${new Date().toISOString().slice(0, 10)}.json`;
-            link.click();
-        }
-
-        // データバックアップ
-        function backupData() {
-            exportData();
-            alert('データのバックアップが完了しました！');
-        }
-
-        // データ復元
-        async function restoreData() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = async function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = async function(e) {
-                        try {
-                            const data = JSON.parse(e.target.result);
-                            await saveData(STORAGE_KEYS.activities, data.activities || []);
-                            await saveData(STORAGE_KEYS.attendance, data.attendance || []);
-                            await saveData(STORAGE_KEYS.passwords, data.passwords || {});
-                            
-                            alert('データの復元が完了しました！ページを再読み込みします。');
-                            location.reload();
-                        } catch (error) {
-                            alert('ファイルの読み込みに失敗しました。');
-                        }
-                    };
-                    reader.readAsText(file);
-                }
-            };
-            input.click();
-        }
-
-        // ローカルデータ移行
-        async function migrateLocalData() {
-            if (!window.firebaseDB.isConnected()) {
-                alert('Firebase接続が必要です。');
-                return;
-            }
-            
-            if (confirm('ローカルに保存されているデータをクラウドに移行しますか？')) {
-                try {
-                    updateSyncStatus('syncing', '🔄 移行中...');
-                    
-                    const localActivities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-                    const localAttendance = JSON.parse(localStorage.getItem(STORAGE_KEYS.attendance) || '[]');
-                    const localPasswords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
-                    
-                    await saveToFirebase(FIREBASE_PATHS.activities, localActivities);
-                    await saveToFirebase(FIREBASE_PATHS.attendance, localAttendance);
-                    await saveToFirebase(FIREBASE_PATHS.passwords, localPasswords);
-                    
-                    updateSyncStatus('connected', '✅ 移行完了');
-                    alert('ローカルデータの移行が完了しました！');
-                } catch (error) {
-                    updateSyncStatus('error', '❌ 移行失敗');
-                    alert('データ移行に失敗しました。');
-                }
-            }
-        }
-
-        // 全データクリア
-        async function clearAllData() {
-            if (!currentUser || !currentUser.isAdmin) {
-                alert('管理者権限が必要です。');
-                return;
-            }
-            
-            if (confirm('本当に全てのデータを削除しますか？この操作は取り消せません。')) {
-                if (confirm('最終確認：全データが削除されます。よろしいですか？')) {
-                    // ローカルストレージをクリア
-                    localStorage.removeItem(STORAGE_KEYS.activities);
-                    localStorage.removeItem(STORAGE_KEYS.attendance);
-                    localStorage.removeItem(STORAGE_KEYS.passwords);
-                    
-                    // Firebaseもクリア
-                    if (window.firebaseDB.isConnected()) {
-                        await saveToFirebase(FIREBASE_PATHS.activities, []);
-                        await saveToFirebase(FIREBASE_PATHS.attendance, []);
-                        await saveToFirebase(FIREBASE_PATHS.passwords, {});
-                    }
-                    
-                    alert('全データが削除されました。ページを再読み込みします。');
-                    location.reload();
-                }
-            }
-        }
-
-        // 今日の日付を設定
-        document.getElementById('activityDate').valueAsDate = new Date();
-
-        console.log('🚒 消防団活動報告システム（共有版）読み込み完了！');
+        // 初期化
+        initializePasswords();
+        
+        console.log('🚒 消防団活動報告システム（シンプル版）読み込み完了！');
     </script>
 </body>
 </html>
