@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="ja">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>消防団活動報告システム（シンプル版2）</title>
+<title>消防団活動報告システム（完全版）</title>
 <style>
         * {
             margin: 0;
@@ -268,7 +269,7 @@
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background: #fff3cd; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #856404;">
-⚠️ シンプル版 - ローカル保存のみ
+✅ 完全版 - 活動報告・統計機能付き
 </div>
 </div>
 <form id="loginForm">
@@ -330,14 +331,45 @@
 </div>
 <div class="tab-content" id="activities">
 <div class="card">
-<h3>📝 新規活動報告</h3>
-<p>活動報告機能は準備中です。</p>
+<h3>📝 新しい活動を報告</h3>
+<form id="activityForm">
+<div class="form-group">
+<label for="activityDate">活動日</label>
+<input id="activityDate" required="" type="date"/>
+</div>
+<div class="form-group">
+<label for="activityContent">活動内容</label>
+<input id="activityContent" placeholder="活動内容を入力" required="" type="text"/>
+</div>
+<div class="form-group">
+<label>車両出動</label>
+<div style="display: flex; gap: 1rem;">
+<label><input checked="" name="vehicleDispatch" type="radio" value="false"/> 無</label>
+<label><input name="vehicleDispatch" type="radio" value="true"/> 有</label>
+</div>
+</div>
+<div class="form-group">
+<label for="startTime">開始時刻</label>
+<input id="startTime" required="" type="time"/>
+</div>
+<div class="form-group">
+<label for="endTime">終了時刻</label>
+<input id="endTime" required="" type="time"/>
+</div>
+<div class="form-group">
+<label for="activityMemo">活動メモ</label>
+<textarea id="activityMemo" placeholder="活動の詳細を入力してください" rows="3"></textarea>
+</div>
+<button class="btn btn-success" type="submit">活動を登録</button>
+</form>
 </div>
 </div>
 <div class="tab-content" id="activity-list">
 <div class="card">
 <h3>📋 活動一覧</h3>
-<p>活動一覧機能は準備中です。</p>
+<div id="activityList">
+<p>まだ活動が登録されていません。</p>
+</div>
 </div>
 </div>
 <div class="tab-content" id="members">
@@ -351,7 +383,8 @@
 <script>
         // データ保存用のキー
         const STORAGE_KEYS = {
-            passwords: 'fireCorps_passwords'
+            passwords: 'fireCorps_passwords',
+            activities: 'fireCorps_activities'
         };
 
         // 現在のユーザー
@@ -440,7 +473,137 @@
             showLogin();
         });
 
-        // ログイン処理
+        // ログアウト
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('passwordSetupContainer').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        // タブ切り替え
+        function showTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            const tabButtons = document.querySelectorAll('.nav-tab');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // 活動報告フォームの処理
+        document.getElementById('activityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            
+            const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
+            
+            const newActivity = {
+                id: Date.now().toString(),
+                date: document.getElementById('activityDate').value,
+                content: document.getElementById('activityContent').value,
+                vehicleDispatch: vehicleDispatch,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                memo: document.getElementById('activityMemo').value,
+                createdAt: new Date().toISOString(),
+                createdBy: currentUser ? currentUser.name : 'unknown'
+            };
+            
+            activities.push(newActivity);
+            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
+            
+            this.reset();
+            updateDashboard();
+            displayActivityList();
+            
+            alert('活動が記録されました！');
+        });
+
+        // ダッシュボードの更新
+        function updateDashboard() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            
+            // 今月の活動数を計算
+            const now = new Date();
+            const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            const monthlyActivities = activities.filter(a => a.date.startsWith(currentMonth));
+            
+            // 車両出動の活動数
+            const vehicleActivities = monthlyActivities.filter(a => a.vehicleDispatch);
+            
+            // ダッシュボードの内容を更新
+            const dashboardContent = `
+                <h3>📊 ダッシュボード</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">${monthlyActivities.length}</div>
+                        <div>今月の活動回数</div>
+                    </div>
+                    <div style="background: #28a745; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">${vehicleActivities.length}</div>
+                        <div>今月の車両出動</div>
+                    </div>
+                    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">${activities.length}</div>
+                        <div>総活動回数</div>
+                    </div>
+                </div>
+                <h4>📋 最近の活動</h4>
+                <div>
+                    ${activities.slice(-3).reverse().map(activity => `
+                        <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                            <strong>${activity.content}</strong> (${activity.date})
+                            <br><small>${activity.vehicleDispatch ? '🚗 車両出動' : ''} ${activity.startTime}〜${activity.endTime} - 登録者: ${activity.createdBy}</small>
+                        </div>
+                    `).join('') || '<p>まだ活動が登録されていません。</p>'}
+                </div>
+            `;
+            
+            document.querySelector('#dashboard .card').innerHTML = dashboardContent;
+        }
+
+        // 活動一覧の表示
+        function displayActivityList() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            
+            if (activities.length === 0) {
+                document.getElementById('activityList').innerHTML = '<p>まだ活動が登録されていません。</p>';
+                return;
+            }
+            
+            const activitiesHtml = activities.slice().reverse().map(activity => `
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <div style="font-weight: bold; font-size: 1.1rem;">${activity.content}</div>
+                        <div style="color: #666; font-size: 0.9rem;">${activity.date}</div>
+                    </div>
+                    <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                        ${activity.vehicleDispatch ? '🚗 車両出動' : '📝 通常活動'} | 
+                        ${activity.startTime}〜${activity.endTime} | 
+                        登録者: ${activity.createdBy}
+                    </div>
+                    ${activity.memo ? `<div style="background: white; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem;">${activity.memo}</div>` : ''}
+                </div>
+            `).join('');
+            
+            document.getElementById('activityList').innerHTML = activitiesHtml;
+        }
+
+        // 今日の日付を設定
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('activityDate').value = today;
+        }
+
+        // 初期化
+        initializePasswords();
+        
+        // ログイン処理（ダッシュボード更新機能付き）
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
@@ -464,33 +627,14 @@
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = user.name + 'さん';
+            
+            // ログイン後の初期化
+            setTodayDate();
+            updateDashboard();
+            displayActivityList();
         });
-
-        // ログアウト
-        function logout() {
-            currentUser = null;
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('passwordSetupContainer').style.display = 'none';
-            document.getElementById('loginForm').reset();
-        }
-
-        // タブ切り替え
-        function showTab(tabName) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            const tabButtons = document.querySelectorAll('.nav-tab');
-            tabButtons.forEach(button => button.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // 初期化
-        initializePasswords();
         
-        console.log('🚒 消防団活動報告システム（シンプル版）読み込み完了！');
+        console.log('🚒 消防団活動報告システム（完全版）読み込み完了！');
     </script>
 </body>
 </html>
