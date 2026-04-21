@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-
-<html lang="ja">
-<head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>消防団活動報告システム（完全版）</title>
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>消防団活動報告システム（修正版）</title>
 <style>
         * {
             margin: 0;
@@ -234,6 +231,24 @@
             background: #218838;
         }
 
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
         .logout-btn {
             background: #dc3545;
             color: white;
@@ -245,6 +260,70 @@
 
         .logout-btn:hover {
             background: #c82333;
+        }
+
+        .vehicle-info {
+            display: none;
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        .member-attendance {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .member-item {
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid #dee2e6;
+        }
+
+        .member-checkbox {
+            margin-right: 0.5rem;
+        }
+
+        .individual-time {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #fff;
+            border-radius: 3px;
+        }
+
+        .individual-time input {
+            width: 80px;
+            padding: 0.25rem;
+            margin: 0 0.25rem;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .admin-only {
+            display: none;
+        }
+
+        .period-selector {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #e9ecef;
+            border-radius: 5px;
+        }
+
+        .sort-controls {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #e9ecef;
+            border-radius: 5px;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
         @media (max-width: 768px) {
@@ -260,31 +339,42 @@
                 padding: 0.75rem 1rem;
                 font-size: 0.9rem;
             }
+
+            .member-attendance {
+                grid-template-columns: 1fr;
+            }
+
+            .sort-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
         }
     </style>
 </head>
 <body>
-<div class="login-container" id="loginContainer">
+<!-- ログイン画面 -->
+<div class="login-container" id="loginContainer" style="display: none;">
 <div class="login-header">
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
-<div style="background: #fff3cd; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #856404;">
-✅ 完全版 - 活動報告・統計機能付き
-</div>
+<div style="background: #d4edda; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #155724;">
+                ✅ 修正版 - HTMLデータ出力完全修正済み
+            </div>
 </div>
 <form id="loginForm">
 <div class="form-group">
 <label for="loginId">ユーザーID</label>
-<input id="loginId" placeholder="IDを入力してください" required="" type="text"/>
+<input id="loginId" placeholder="IDを入力してください" required="" type="text">
 </div>
 <div class="form-group">
 <label for="password">パスワード</label>
-<input id="password" placeholder="パスワードを入力してください" required="" type="password"/>
+<input id="password" placeholder="パスワードを入力してください" required="" type="password">
 </div>
 <button class="login-btn" type="submit">ログイン</button>
 <button class="first-time-btn" onclick="showPasswordSetup()" type="button">初回パスワード設定</button>
 </form>
 </div>
+<!-- パスワード設定画面 -->
 <div class="password-setup-container" id="passwordSetupContainer">
 <div class="login-header">
 <h1>🔐 初回パスワード設定</h1>
@@ -294,25 +384,26 @@
 <form id="passwordSetupForm">
 <div class="form-group">
 <label for="setupId">ユーザーID</label>
-<input id="setupId" placeholder="IDを入力してください" required="" type="text"/>
+<input id="setupId" placeholder="IDを入力してください" required="" type="text">
 </div>
 <div class="form-group">
 <label for="newPassword">新しいパスワード</label>
-<input id="newPassword" placeholder="新しいパスワードを入力してください" required="" type="password"/>
+<input id="newPassword" placeholder="新しいパスワードを入力してください" required="" type="password">
 </div>
 <div class="form-group">
 <label for="confirmPassword">パスワード確認</label>
-<input id="confirmPassword" placeholder="パスワードを再入力してください" required="" type="password"/>
+<input id="confirmPassword" placeholder="パスワードを再入力してください" required="" type="password">
 </div>
 <button class="login-btn" type="submit">パスワードを設定</button>
 </form>
 </div>
-<div class="main-app" id="mainApp">
+<!-- メインアプリケーション -->
+<div class="main-app" id="mainApp" style="display: block;">
 <div class="header">
 <h1>🚒 消防団活動報告システム</h1>
 <div style="display: flex; align-items: center;">
-<span class="sync-status" id="syncStatus">📱 ローカル版</span>
-<span id="currentUser"></span>
+<span class="sync-status" id="syncStatus">📱 修正版</span>
+<span id="currentUser">赤土大輔さん</span>
 <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
 </div>
@@ -322,39 +413,351 @@
 <button class="nav-tab" onclick="showTab('activity-list')">活動一覧</button>
 <button class="nav-tab" onclick="showTab('members')">団員管理</button>
 </div>
+<!-- ダッシュボード -->
 <div class="tab-content active" id="dashboard">
 <div class="card">
 <h3>📊 ダッシュボード</h3>
-<p>システムが正常に動作しています。</p>
-<p>現在はローカル版で動作中です。</p>
+<div class="period-selector">
+<label for="dashboardPeriod">表示期間:</label>
+<select id="dashboardPeriod" onchange="updateDashboard()"><option value="2026-04">2026年4月</option><option value="2026-03">2026年3月</option><option value="2026-02">2026年2月</option></select>
+</div>
+<div id="dashboardContent">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">4</div>
+                        <div>2026年4月の活動回数</div>
+                    </div>
+                    <div style="background: #28a745; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">2</div>
+                        <div>2026年4月の車両出動</div>
+                    </div>
+                    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">4</div>
+                        <div>総活動回数(令和8年度)</div>
+                    </div>
+                </div>
+                
+                    <div style="background: #e9ecef; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                        <h4>🔧 管理者機能</h4>
+                        <button class="btn btn-primary" onclick="exportHTML()">HTMLデータ出力</button>
+                        <button class="btn btn-success" onclick="exportExcel()">活動結果エクセル出力</button>
+                        <button class="btn btn-warning" onclick="importData()">データインポート(XLSX)</button>
+                        <button class="btn btn-danger" onclick="logout()">ログアウト</button>
+                    </div>
+                
+                <h4>📋 2026年4月の活動 (4件)</h4>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                                <strong>テスト</strong> (2026-04-21)
+                                <br><small>
+                                    🚗 車両出動 
+                                    12:00〜17:00 
+                                    - 出席: 大野, 平野, 赤土, 傑, 笠間 (カウント: 4名)
+                                    - 登録者: 赤土大輔
+                                </small>
+                            </div>
+                        
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                                <strong>新入団員役員研修会</strong> (2026-04-14)
+                                <br><small>
+                                    📝 通常活動 
+                                    00:00〜00:00 
+                                    - 出席: 大野, 相沢 (カウント: 2名)
+                                    - 登録者: システム復旧
+                                </small>
+                            </div>
+                        
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                                <strong>入退団式</strong> (2026-04-05)
+                                <br><small>
+                                    🚗 車両出動 
+                                    00:00〜00:00 
+                                    - 出席: 大野, 平野, 赤土, 田中, 春沢, 土肥, 相沢 (カウント: 7名)
+                                    - 登録者: システム復旧
+                                </small>
+                            </div>
+                        
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                                <strong>入退団式準備</strong> (2026-04-04)
+                                <br><small>
+                                    📝 通常活動 
+                                    00:00〜00:00 
+                                    - 出席: 大野, 平野 (カウント: 2名)
+                                    - 登録者: システム復旧
+                                </small>
+                            </div>
+                        
+                </div>
+            </div>
 </div>
 </div>
+<!-- 新規活動報告 -->
 <div class="tab-content" id="activities">
 <div class="card">
 <h3>📝 新しい活動を報告</h3>
 <form id="activityForm">
 <div class="form-group">
 <label for="activityDate">活動日</label>
-<input id="activityDate" required="" type="date"/>
+<input id="activityDate" required="" type="date">
 </div>
 <div class="form-group">
 <label for="activityContent">活動内容</label>
-<input id="activityContent" placeholder="活動内容を入力" required="" type="text"/>
+<input id="activityContent" onfocus="showActivityHistory()" oninput="showActivitySuggestions(this.value)" placeholder="活動内容を入力" required="" type="text">
+<div id="activitySuggestions" style="display: none; background: white; border: 1px solid #ccc; border-top: none; max-height: 150px; overflow-y: auto; position: relative; z-index: 1000;"></div>
 </div>
 <div class="form-group">
 <label>車両出動</label>
 <div style="display: flex; gap: 1rem;">
-<label><input checked="" name="vehicleDispatch" type="radio" value="false"/> 無</label>
-<label><input name="vehicleDispatch" type="radio" value="true"/> 有</label>
+<label><input checked="" name="vehicleDispatch" onchange="toggleVehicleInfo()" type="radio" value="false"> 無</label>
+<label><input name="vehicleDispatch" onchange="toggleVehicleInfo()" type="radio" value="true"> 有</label>
+</div>
+</div>
+<!-- 車両情報（車両出動時のみ表示） -->
+<div class="vehicle-info" id="vehicleInfo">
+<h4>🚗 車両情報</h4>
+<div class="form-group">
+<label for="driver">運転者</label>
+<select id="driver"><option value="">選択してください</option><option value="No5">大野</option><option value="No3">平野</option><option value="No6">赤土</option><option value="No4">田中</option><option value="No7">春沢</option><option value="No8">傑</option><option value="No9">小島</option><option value="No10">土肥</option><option value="No11">相沢</option><option value="No12">青木</option><option value="No1">新居</option><option value="No2">竪月</option></select>
+</div>
+<div class="form-group">
+<label for="leader">筆頭(飲酒運転確認者)</label>
+<select id="leader"><option value="">選択してください</option><option value="driver-only">(運転者のみ)</option><option value="No5">大野</option><option value="No3">平野</option><option value="No6">赤土</option><option value="No4">田中</option><option value="No7">春沢</option><option value="No8">傑</option><option value="No9">小島</option><option value="No10">土肥</option><option value="No11">相沢</option><option value="No12">青木</option><option value="No1">新居</option><option value="No2">竪月</option></select>
+</div>
+<div class="form-group">
+<label for="operationType">運行内容</label>
+<select id="operationType">
+<option value="">選択してください</option>
+<option value="火災">火災</option>
+<option value="警戒">警戒</option>
+<option value="訓練">訓練</option>
+<option value="点検等">点検等</option>
+</select>
+</div>
+<div class="form-group">
+<label for="meterDistance">メーター距離数</label>
+<input id="meterDistance" placeholder="距離を入力" type="number">
+</div>
+<div class="form-group">
+<label for="operationStart">運行開始</label>
+<input id="operationStart" onblur="syncTimes('operationStart')" type="time">
+</div>
+<div class="form-group">
+<label for="operationEnd">運行終了</label>
+<input id="operationEnd" onblur="syncTimes('operationEnd')" type="time">
+</div>
+<div class="form-group">
+<label for="vehicleMemo">備考</label>
+<textarea id="vehicleMemo" placeholder="車両に関する備考" rows="2"></textarea>
 </div>
 </div>
 <div class="form-group">
 <label for="startTime">開始時刻</label>
-<input id="startTime" required="" type="time"/>
+<input id="startTime" onblur="syncTimes('start')" required="" type="time">
 </div>
 <div class="form-group">
 <label for="endTime">終了時刻</label>
-<input id="endTime" required="" type="time"/>
+<input id="endTime" onblur="syncTimes('end')" required="" type="time">
+</div>
+<!-- 出動人員 -->
+<div class="form-group">
+<label>出動人員</label>
+<div class="member-attendance" id="memberAttendance"><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No5" onchange="toggleIndividualTime('No5')">
+                        大野
+                    </label>
+                    <div class="individual-time" id="individual-No5">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No5')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No5" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No3" onchange="toggleIndividualTime('No3')">
+                        平野
+                    </label>
+                    <div class="individual-time" id="individual-No3">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No3')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No3" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No6" onchange="toggleIndividualTime('No6')">
+                        赤土
+                    </label>
+                    <div class="individual-time" id="individual-No6">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No6')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No6" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No4" onchange="toggleIndividualTime('No4')">
+                        田中
+                    </label>
+                    <div class="individual-time" id="individual-No4">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No4')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No4" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No7" onchange="toggleIndividualTime('No7')">
+                        春沢
+                    </label>
+                    <div class="individual-time" id="individual-No7">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No7')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No7" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No8" onchange="toggleIndividualTime('No8')">
+                        傑
+                    </label>
+                    <div class="individual-time" id="individual-No8">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No8')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No8" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No9" onchange="toggleIndividualTime('No9')">
+                        小島
+                    </label>
+                    <div class="individual-time" id="individual-No9">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No9')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No9" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No10" onchange="toggleIndividualTime('No10')">
+                        土肥
+                    </label>
+                    <div class="individual-time" id="individual-No10">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No10')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No10" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No11" onchange="toggleIndividualTime('No11')">
+                        相沢
+                    </label>
+                    <div class="individual-time" id="individual-No11">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No11')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No11" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No12" onchange="toggleIndividualTime('No12')">
+                        青木
+                    </label>
+                    <div class="individual-time" id="individual-No12">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No12')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No12" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No1" onchange="toggleIndividualTime('No1')">
+                        新居
+                    </label>
+                    <div class="individual-time" id="individual-No1">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No1')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No1" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No2" onchange="toggleIndividualTime('No2')">
+                        竪月
+                    </label>
+                    <div class="individual-time" id="individual-No2">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No2')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No2" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div><div class="member-item">
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="No0" onchange="toggleIndividualTime('No0')">
+                        笠間
+                    </label>
+                    <div class="individual-time" id="individual-No0">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No0')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-No0" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                </div></div>
 </div>
 <div class="form-group">
 <label for="activityMemo">活動メモ</label>
@@ -364,22 +767,541 @@
 </form>
 </div>
 </div>
+<!-- 活動一覧 -->
 <div class="tab-content" id="activity-list">
 <div class="card">
 <h3>📋 活動一覧</h3>
+<div class="sort-controls">
+<label>
+                        並び順:
+                        <select id="sortOrder" onchange="displayActivityList()">
+<option value="desc">新しい順</option>
+<option value="asc">古い順</option>
+</select>
+</label>
+<label>
+<input id="filterVehicle" onchange="displayActivityList()" type="checkbox">
+                        車両出動のみ表示
+                    </label>
+<label>
+                        活動内容で絞り込み:
+                        <input id="filterContent" onchange="displayActivityList()" placeholder="キーワード入力" type="text">
+</label>
+</div>
 <div id="activityList">
-<p>まだ活動が登録されていません。</p>
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">テスト</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-21</div>
+                                <button class="btn btn-warning" onclick="editActivity('1776736617828')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            12:00〜17:00 | 
+                            出席: 大野, 平野, 赤土, 傑, 笠間 (カウント: 4名) | 
+                            登録者: 赤土大輔
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 平野 | 
+                        筆頭: 大野 | 
+                        火災 | 
+                        915km
+                         | test
+                    </div>
+                
+                        <div style="background: white; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; margin-top: 0.5rem;">tesuto</div>
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">新入団員役員研修会</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-14</div>
+                                <button class="btn btn-warning" onclick="editActivity('6dc9c5a2')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 相沢 (カウント: 2名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">入退団式</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-05</div>
+                                <button class="btn btn-warning" onclick="editActivity('a0ad3012')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 平野, 赤土, 田中, 春沢, 土肥, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 土肥 | 
+                        筆頭: 大野 | 
+                        訓練 | 
+                        910km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">入退団式準備</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-04</div>
+                                <button class="btn btn-warning" onclick="editActivity('95ded5c8')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 平野 (カウント: 2名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">分団引継ぎ　分団会議</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-31</div>
+                                <button class="btn btn-warning" onclick="editActivity('e8651e75')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 相沢, 新居 (カウント: 3名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">広報団員説明会</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-17</div>
+                                <button class="btn btn-warning" onclick="editActivity('68a874eb')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 相沢 (カウント: 1名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">出火報</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-16</div>
+                                <button class="btn btn-warning" onclick="editActivity('a64871e8')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 赤土 (カウント: 1名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">出火報</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-09</div>
+                                <button class="btn btn-warning" onclick="editActivity('4cabd1ff')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 平野, 赤土 (カウント: 3名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">警戒</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-07</div>
+                                <button class="btn btn-warning" onclick="editActivity('6e40a452')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 田中, 大野, 赤土, 土肥, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 竪月 | 
+                        筆頭: 大野 | 
+                        警戒 | 
+                        905km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">さくらぎ防災訓練</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-05</div>
+                                <button class="btn btn-warning" onclick="editActivity('e864b55a')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 平野 (カウント: 2名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 新居 | 
+                        筆頭: 平野 | 
+                        訓練 | 
+                        894km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">警戒</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-04</div>
+                                <button class="btn btn-warning" onclick="editActivity('45889a2a')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 竪月, 平野, 大野, 赤土, 相沢 (カウント: 5名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 相沢 | 
+                        筆頭: 竪月 | 
+                        警戒 | 
+                        893km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">車両給油</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-02</div>
+                                <button class="btn btn-warning" onclick="editActivity('9ac67c99')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 赤土 (カウント: 1名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 赤土 | 
+                        筆頭: 未設定 | 
+                        点検等 | 
+                        878km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">出火報</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-01</div>
+                                <button class="btn btn-warning" onclick="editActivity('7d6ac393')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 平野, 赤土, 相沢 (カウント: 5名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">警戒・部会</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-01</div>
+                                <button class="btn btn-warning" onclick="editActivity('1f5e06e2')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 平野, 大野, 赤土, 春沢, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 相沢 | 
+                        筆頭: 竪月 | 
+                        警戒 | 
+                        874km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">パレード・水利点検</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-01</div>
+                                <button class="btn btn-warning" onclick="editActivity('fd9f390d')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 平野, 大野, 赤土, 春沢, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 新居 | 
+                        筆頭: 竪月 | 
+                        訓練 | 
+                        857km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">先月情報【仮入力】</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-02-28</div>
+                                <button class="btn btn-warning" onclick="editActivity('7a19aae1')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居 (カウント: 1名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 新居 | 
+                        筆頭: 新居 | 
+                        点検等 | 
+                        820km
+                        
+                    </div>
+                
+                        
+                    </div>
+                </div>
 </div>
 </div>
-</div>
+<!-- 団員管理 -->
 <div class="tab-content" id="members">
 <div class="card">
 <h3>👥 団員管理</h3>
-<p>団員管理機能は準備中です。</p>
+<div id="membersList">
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">大野敏治</div>
+                        <div style="color: #666; font-size: 0.9rem;">部長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No5')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No5')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">平野雄大</div>
+                        <div style="color: #666; font-size: 0.9rem;">副部長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No3')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No3')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">赤土大輔</div>
+                        <div style="color: #666; font-size: 0.9rem;">副部長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No6')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No6')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">田中秀和</div>
+                        <div style="color: #666; font-size: 0.9rem;">班長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No4')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No4')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">春沢裕</div>
+                        <div style="color: #666; font-size: 0.9rem;">班長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No7')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No7')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">宮林傑</div>
+                        <div style="color: #666; font-size: 0.9rem;">班長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No8')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No8')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">小島佑大</div>
+                        <div style="color: #666; font-size: 0.9rem;">班長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No9')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No9')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">土肥美樹</div>
+                        <div style="color: #666; font-size: 0.9rem;">班長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No10')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No10')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">相沢守</div>
+                        <div style="color: #666; font-size: 0.9rem;">班長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No11')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No11')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">青木理</div>
+                        <div style="color: #666; font-size: 0.9rem;">機能別</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No12')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No12')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">新居寛之</div>
+                        <div style="color: #666; font-size: 0.9rem;">機能別</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No1')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No1')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">竪月志朗</div>
+                        <div style="color: #666; font-size: 0.9rem;">機能別</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No2')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No2')">編集</button>
+                    </div>
+                </div>
+            
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">笠間佑介</div>
+                        <div style="color: #666; font-size: 0.9rem;">副分団長</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('No0')">活動確認</button>
+                        <button class="btn btn-warning" onclick="editMember('No0')">編集</button>
+                    </div>
+                </div>
+            </div>
 </div>
 </div>
 </div>
-
 <script>
         // データ保存用のキー
         const STORAGE_KEYS = {
@@ -390,21 +1312,348 @@
         // 現在のユーザー
         let currentUser = null;
 
-        // 団員リスト
+        // 団員リスト（Excelデータから復旧）
         const members = [
-            { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', isAdmin: true },
-            { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', isAdmin: true },
-            { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', isAdmin: true },
-            { id: 'No4', name: '田中秀和', role: '班長', nickname: '田中', isAdmin: false },
-            { id: 'No7', name: '春沢裕', role: '班長', nickname: '春沢', isAdmin: false },
-            { id: 'No8', name: '宮林傑', role: '班長', nickname: '傑', isAdmin: false },
-            { id: 'No9', name: '小島佑大', role: '班長', nickname: '小島', isAdmin: false },
-            { id: 'No10', name: '土肥美樹', role: '班長', nickname: '土肥', isAdmin: false },
-            { id: 'No11', name: '相沢守', role: '班長', nickname: '相沢', isAdmin: false },
-            { id: 'No12', name: '青木理', role: '機能別', nickname: '青木', isAdmin: false },
-            { id: 'No1', name: '新居寛之', role: '機能別', nickname: '新居', isAdmin: false },
-            { id: 'No2', name: '竪月志朗', role: '機能別', nickname: '竪月', isAdmin: false }
+            { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', isAdmin: true, isExcluded: false },
+            { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', isAdmin: true, isExcluded: false },
+            { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', isAdmin: true, isExcluded: false },
+            { id: 'No4', name: '田中秀和', role: '班長', nickname: '田中', isAdmin: false, isExcluded: false },
+            { id: 'No7', name: '春沢裕', role: '班長', nickname: '春沢', isAdmin: false, isExcluded: false },
+            { id: 'No8', name: '宮林傑', role: '班長', nickname: '傑', isAdmin: false, isExcluded: false },
+            { id: 'No9', name: '小島佑大', role: '班長', nickname: '小島', isAdmin: false, isExcluded: false },
+            { id: 'No10', name: '土肥美樹', role: '班長', nickname: '土肥', isAdmin: false, isExcluded: false },
+            { id: 'No11', name: '相沢守', role: '班長', nickname: '相沢', isAdmin: false, isExcluded: false },
+            { id: 'No12', name: '青木理', role: '機能別', nickname: '青木', isAdmin: false, isExcluded: false },
+            { id: 'No1', name: '新居寛之', role: '機能別', nickname: '新居', isAdmin: false, isExcluded: false },
+            { id: 'No2', name: '竪月志朗', role: '機能別', nickname: '竪月', isAdmin: false, isExcluded: false },
+            { id: 'No0', name: '笠間佑介', role: '副分団長', nickname: '笠間', isAdmin: false, isExcluded: true }
         ];
+
+        // 既存活動データ（Excelから復旧）
+        const existingActivities = [
+          {
+                    "id": "7d6ac393",
+                    "date": "2026-03-01",
+                    "content": "出火報",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No2",
+                              "No3",
+                              "No6",
+                              "No11"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-01T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "1f5e06e2",
+                    "date": "2026-03-01",
+                    "content": "警戒・部会",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No2",
+                              "No3",
+                              "No5",
+                              "No6",
+                              "No7",
+                              "No11"
+                    ],
+                    "driver": "No11",
+                    "leader": "No2",
+                    "operationType": "警戒",
+                    "meterDistance": 874,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-01T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "9ac67c99",
+                    "date": "2026-03-02",
+                    "content": "車両給油",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No6"
+                    ],
+                    "driver": "No6",
+                    "leader": "",
+                    "operationType": "点検等",
+                    "meterDistance": 878,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-02T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "45889a2a",
+                    "date": "2026-03-04",
+                    "content": "警戒",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No2",
+                              "No3",
+                              "No5",
+                              "No6",
+                              "No11"
+                    ],
+                    "driver": "No11",
+                    "leader": "No2",
+                    "operationType": "警戒",
+                    "meterDistance": 893,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-04T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "6e40a452",
+                    "date": "2026-03-07",
+                    "content": "警戒",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No2",
+                              "No4",
+                              "No5",
+                              "No6",
+                              "No10",
+                              "No11"
+                    ],
+                    "driver": "No2",
+                    "leader": "No5",
+                    "operationType": "警戒",
+                    "meterDistance": 905,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-07T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "7a19aae1",
+                    "date": "2026-02-28",
+                    "content": "先月情報【仮入力】",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1"
+                    ],
+                    "driver": "No1",
+                    "leader": "No1",
+                    "operationType": "点検等",
+                    "meterDistance": 820,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-02-28T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "fd9f390d",
+                    "date": "2026-03-01",
+                    "content": "パレード・水利点検",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No2",
+                              "No3",
+                              "No5",
+                              "No6",
+                              "No7",
+                              "No11"
+                    ],
+                    "driver": "No1",
+                    "leader": "No2",
+                    "operationType": "訓練",
+                    "meterDistance": 857,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-01T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "e864b55a",
+                    "date": "2026-03-05",
+                    "content": "さくらぎ防災訓練",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No3"
+                    ],
+                    "driver": "No1",
+                    "leader": "No3",
+                    "operationType": "訓練",
+                    "meterDistance": 894,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-05T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "a64871e8",
+                    "date": "2026-03-16",
+                    "content": "出火報",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No6"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-16T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "4cabd1ff",
+                    "date": "2026-03-09",
+                    "content": "出火報",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No3",
+                              "No6"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-09T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "68a874eb",
+                    "date": "2026-03-17",
+                    "content": "広報団員説明会",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No11"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-17T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "e8651e75",
+                    "date": "2026-03-31",
+                    "content": "分団引継ぎ　分団会議",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No5",
+                              "No11",
+                              "No1"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-31T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "95ded5c8",
+                    "date": "2026-04-04",
+                    "content": "入退団式準備",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No5",
+                              "No3"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-04-04T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "a0ad3012",
+                    "date": "2026-04-05",
+                    "content": "入退団式",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No5",
+                              "No3",
+                              "No6",
+                              "No4",
+                              "No7",
+                              "No10",
+                              "No11"
+                    ],
+                    "driver": "No10",
+                    "leader": "No5",
+                    "operationType": "訓練",
+                    "meterDistance": 910,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-04-05T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "6dc9c5a2",
+                    "date": "2026-04-14",
+                    "content": "新入団員役員研修会",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No5",
+                              "No11"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-04-14T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "1776736617828",
+                    "date": "2026-04-21",
+                    "content": "テスト",
+                    "vehicleDispatch": true,
+                    "startTime": "12:00",
+                    "endTime": "17:00",
+                    "attendees": [
+                              "No5",
+                              "No3",
+                              "No6",
+                              "No8",
+                              "No0"
+                    ],
+                    "memo": "tesuto",
+                    "createdAt": "2026-04-21T01:56:57.828Z",
+                    "createdBy": "赤土大輔",
+                    "driver": "No3",
+                    "leader": "No5",
+                    "operationType": "火災",
+                    "meterDistance": 915,
+                    "operationStart": "12:30",
+                    "operationEnd": "16:30",
+                    "vehicleMemo": "test"
+          }
+];
 
         // パスワード管理
         function initializePasswords() {
@@ -422,6 +1671,19 @@
             
             localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
             return passwords;
+        }
+
+        // 既存データの復旧
+        function initializeActivities() {
+            let activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            
+            // 既存データがない場合のみ復旧データを追加
+            if (activities.length === 0) {
+                localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(existingActivities));
+                activities = existingActivities;
+            }
+            
+            return activities;
         }
 
         // パスワード設定画面を表示
@@ -473,137 +1735,7 @@
             showLogin();
         });
 
-        // ログアウト
-        function logout() {
-            currentUser = null;
-            document.getElementById('loginContainer').style.display = 'block';
-            document.getElementById('mainApp').style.display = 'none';
-            document.getElementById('passwordSetupContainer').style.display = 'none';
-            document.getElementById('loginForm').reset();
-        }
-
-        // タブ切り替え
-        function showTab(tabName) {
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            const tabButtons = document.querySelectorAll('.nav-tab');
-            tabButtons.forEach(button => button.classList.remove('active'));
-
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // 活動報告フォームの処理
-        document.getElementById('activityForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            
-            const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
-            
-            const newActivity = {
-                id: Date.now().toString(),
-                date: document.getElementById('activityDate').value,
-                content: document.getElementById('activityContent').value,
-                vehicleDispatch: vehicleDispatch,
-                startTime: document.getElementById('startTime').value,
-                endTime: document.getElementById('endTime').value,
-                memo: document.getElementById('activityMemo').value,
-                createdAt: new Date().toISOString(),
-                createdBy: currentUser ? currentUser.name : 'unknown'
-            };
-            
-            activities.push(newActivity);
-            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
-            
-            this.reset();
-            updateDashboard();
-            displayActivityList();
-            
-            alert('活動が記録されました！');
-        });
-
-        // ダッシュボードの更新
-        function updateDashboard() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            
-            // 今月の活動数を計算
-            const now = new Date();
-            const currentMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
-            const monthlyActivities = activities.filter(a => a.date.startsWith(currentMonth));
-            
-            // 車両出動の活動数
-            const vehicleActivities = monthlyActivities.filter(a => a.vehicleDispatch);
-            
-            // ダッシュボードの内容を更新
-            const dashboardContent = `
-                <h3>📊 ダッシュボード</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">${monthlyActivities.length}</div>
-                        <div>今月の活動回数</div>
-                    </div>
-                    <div style="background: #28a745; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">${vehicleActivities.length}</div>
-                        <div>今月の車両出動</div>
-                    </div>
-                    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">${activities.length}</div>
-                        <div>総活動回数</div>
-                    </div>
-                </div>
-                <h4>📋 最近の活動</h4>
-                <div>
-                    ${activities.slice(-3).reverse().map(activity => `
-                        <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
-                            <strong>${activity.content}</strong> (${activity.date})
-                            <br><small>${activity.vehicleDispatch ? '🚗 車両出動' : ''} ${activity.startTime}〜${activity.endTime} - 登録者: ${activity.createdBy}</small>
-                        </div>
-                    `).join('') || '<p>まだ活動が登録されていません。</p>'}
-                </div>
-            `;
-            
-            document.querySelector('#dashboard .card').innerHTML = dashboardContent;
-        }
-
-        // 活動一覧の表示
-        function displayActivityList() {
-            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            
-            if (activities.length === 0) {
-                document.getElementById('activityList').innerHTML = '<p>まだ活動が登録されていません。</p>';
-                return;
-            }
-            
-            const activitiesHtml = activities.slice().reverse().map(activity => `
-                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <div style="font-weight: bold; font-size: 1.1rem;">${activity.content}</div>
-                        <div style="color: #666; font-size: 0.9rem;">${activity.date}</div>
-                    </div>
-                    <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
-                        ${activity.vehicleDispatch ? '🚗 車両出動' : '📝 通常活動'} | 
-                        ${activity.startTime}〜${activity.endTime} | 
-                        登録者: ${activity.createdBy}
-                    </div>
-                    ${activity.memo ? `<div style="background: white; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem;">${activity.memo}</div>` : ''}
-                </div>
-            `).join('');
-            
-            document.getElementById('activityList').innerHTML = activitiesHtml;
-        }
-
-        // 今日の日付を設定
-        function setTodayDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('activityDate').value = today;
-        }
-
-        // 初期化
-        initializePasswords();
-        
-        // ログイン処理（ダッシュボード更新機能付き）
+        // ログイン処理
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
@@ -628,13 +1760,881 @@
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = user.name + 'さん';
             
+            // 管理者権限の表示制御
+            const adminElements = document.querySelectorAll('.admin-only');
+            adminElements.forEach(element => {
+                element.style.display = user.isAdmin ? 'block' : 'none';
+            });
+            
             // ログイン後の初期化
             setTodayDate();
+            initializeMemberSelectors();
+            initializeMemberAttendance();
+            generatePeriodOptions();
             updateDashboard();
             displayActivityList();
+            displayMembersList();
         });
+
+        // ログアウト
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginContainer').style.display = 'block';
+            document.getElementById('mainApp').style.display = 'none';
+            document.getElementById('passwordSetupContainer').style.display = 'none';
+            document.getElementById('loginForm').reset();
+        }
+
+        // タブ切り替え
+        function showTab(tabName) {
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            const tabButtons = document.querySelectorAll('.nav-tab');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // 車両情報の表示切り替え
+        function toggleVehicleInfo() {
+            const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
+            const vehicleInfo = document.getElementById('vehicleInfo');
+            vehicleInfo.style.display = vehicleDispatch ? 'block' : 'none';
+            
+            // 最新のメーター距離数を設定
+            if (vehicleDispatch) {
+                setLatestMeterDistance();
+            }
+        }
+
+        // 最新のメーター距離数を設定
+        function setLatestMeterDistance() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const vehicleActivities = activities.filter(a => a.vehicleDispatch && a.meterDistance);
+            
+            if (vehicleActivities.length > 0) {
+                const latestActivity = vehicleActivities.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+                document.getElementById('meterDistance').value = latestActivity.meterDistance || '';
+            }
+        }
+
+        // 時刻の同期（onblur版・入力中断防止）
+        function syncTimes(type) {
+            // 少し遅延を入れて、入力が完了してから同期
+            setTimeout(() => {
+                const startTime = document.getElementById('startTime').value;
+                const endTime = document.getElementById('endTime').value;
+                const operationStart = document.getElementById('operationStart');
+                const operationEnd = document.getElementById('operationEnd');
+                
+                if (type === 'start' && startTime) {
+                    if (!operationStart.value) {
+                        operationStart.value = startTime;
+                    }
+                } else if (type === 'end' && endTime) {
+                    if (!operationEnd.value) {
+                        operationEnd.value = endTime;
+                    }
+                } else if (type === 'operationStart') {
+                    const opStartTime = operationStart.value;
+                    if (opStartTime && !startTime) {
+                        document.getElementById('startTime').value = opStartTime;
+                    }
+                } else if (type === 'operationEnd') {
+                    const opEndTime = operationEnd.value;
+                    if (opEndTime && !endTime) {
+                        document.getElementById('endTime').value = opEndTime;
+                    }
+                }
+            }, 100); // 100ms遅延で入力完了を待つ
+        }
+
+        // 活動内容の予測変換（強化版）
+        function showActivitySuggestions(input) {
+            const suggestionsDiv = document.getElementById('activitySuggestions');
+            
+            if (input.length < 1) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const uniqueContents = [...new Set(activities.map(a => a.content))];
+            const filteredSuggestions = uniqueContents.filter(content => 
+                content.toLowerCase().includes(input.toLowerCase())
+            ).slice(0, 5);
+            
+            if (filteredSuggestions.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = filteredSuggestions.map(suggestion => 
+                `<div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('${suggestion}')">${suggestion}</div>`
+            ).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }
+
+        // フォーカス時に履歴を表示
+        function showActivityHistory() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const uniqueContents = [...new Set(activities.map(a => a.content))].slice(0, 10);
+            const suggestionsDiv = document.getElementById('activitySuggestions');
+            
+            if (uniqueContents.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = uniqueContents.map(content => 
+                `<div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('${content}')">${content}</div>`
+            ).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }
         
-        console.log('🚒 消防団活動報告システム（完全版）読み込み完了！');
+        function selectActivitySuggestion(suggestion) {
+            document.getElementById('activityContent').value = suggestion;
+            document.getElementById('activitySuggestions').style.display = 'none';
+        }
+
+        // 団員セレクターの初期化
+        function initializeMemberSelectors() {
+            const driverSelect = document.getElementById('driver');
+            const leaderSelect = document.getElementById('leader');
+            
+            // 除外されていない団員のみを表示
+            const activeMembers = members.filter(m => !m.isExcluded);
+            
+            // 運転者セレクター
+            driverSelect.innerHTML = '<option value="">選択してください</option>';
+            activeMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.nickname;
+                driverSelect.appendChild(option);
+            });
+            
+            // 筆頭セレクター
+            leaderSelect.innerHTML = '<option value="">選択してください</option><option value="driver-only">(運転者のみ)</option>';
+            activeMembers.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member.id;
+                option.textContent = member.nickname;
+                leaderSelect.appendChild(option);
+            });
+        }
+
+        // 出動人員チェックボックスの初期化
+        function initializeMemberAttendance() {
+            const container = document.getElementById('memberAttendance');
+            container.innerHTML = '';
+            
+            members.forEach(member => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'member-item';
+                
+                memberDiv.innerHTML = `
+                    <label>
+                        <input type="checkbox" class="member-checkbox" value="${member.id}" onchange="toggleIndividualTime('${member.id}')">
+                        ${member.nickname}
+                    </label>
+                    <div class="individual-time" id="individual-${member.id}">
+                        <label>
+                            <input type="checkbox" onchange="toggleIndividualTimeInputs('${member.id}')">
+                            個別時間登録
+                        </label>
+                        <div id="time-inputs-${member.id}" style="display: none;">
+                            <input type="time" class="individual-start" placeholder="開始">
+                            <input type="time" class="individual-end" placeholder="終了">
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(memberDiv);
+            });
+        }
+
+        // 個別時間表示の切り替え
+        function toggleIndividualTime(memberId) {
+            const checkbox = document.querySelector(`input[value="${memberId}"]`);
+            const individualTime = document.getElementById(`individual-${memberId}`);
+            individualTime.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        // 個別時間入力欄の切り替え
+        function toggleIndividualTimeInputs(memberId) {
+            const checkbox = document.querySelector(`#individual-${memberId} input[type="checkbox"]`);
+            const timeInputs = document.getElementById(`time-inputs-${memberId}`);
+            timeInputs.style.display = checkbox.checked ? 'block' : 'none';
+            
+            // チェックした瞬間の時刻を初期値として設定
+            if (checkbox.checked) {
+                const startTime = document.getElementById('startTime').value;
+                const endTime = document.getElementById('endTime').value;
+                const startInput = timeInputs.querySelector('.individual-start');
+                const endInput = timeInputs.querySelector('.individual-end');
+                
+                // 現在の時刻を常に設定（既存値があっても上書き）
+                if (startTime) startInput.value = startTime;
+                if (endTime) endInput.value = endTime;
+            }
+        }
+
+        // 活動報告フォームの処理
+        document.getElementById('activityForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            
+            const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
+            const attendees = Array.from(document.querySelectorAll('.member-checkbox:checked')).map(cb => cb.value);
+            
+            if (attendees.length === 0) {
+                alert('出動人員を選択してください。');
+                return;
+            }
+            
+            const newActivity = {
+                id: Date.now().toString(),
+                date: document.getElementById('activityDate').value,
+                content: document.getElementById('activityContent').value,
+                vehicleDispatch: vehicleDispatch,
+                startTime: document.getElementById('startTime').value,
+                endTime: document.getElementById('endTime').value,
+                attendees: attendees,
+                memo: document.getElementById('activityMemo').value,
+                createdAt: new Date().toISOString(),
+                createdBy: currentUser ? currentUser.name : 'unknown'
+            };
+            
+            // 車両情報の追加
+            if (vehicleDispatch) {
+                newActivity.driver = document.getElementById('driver').value;
+                newActivity.leader = document.getElementById('leader').value;
+                newActivity.operationType = document.getElementById('operationType').value;
+                newActivity.meterDistance = parseInt(document.getElementById('meterDistance').value) || 0;
+                newActivity.operationStart = document.getElementById('operationStart').value;
+                newActivity.operationEnd = document.getElementById('operationEnd').value;
+                newActivity.vehicleMemo = document.getElementById('vehicleMemo').value;
+            }
+            
+            activities.push(newActivity);
+            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
+            
+            this.reset();
+            document.getElementById('vehicleInfo').style.display = 'none';
+            initializeMemberAttendance();
+            updateDashboard();
+            displayActivityList();
+            
+            alert('活動が記録されました！');
+        });
+
+        // 年度の開始・終了日を取得
+        function getFiscalYearRange(year) {
+            const startDate = `${year}-04-01`;
+            const endDate = `${parseInt(year) + 1}-03-31`;
+            return { startDate, endDate };
+        }
+
+        // 年度内の活動をフィルタ
+        function getActivitiesInFiscalYear(activities, year) {
+            const { startDate, endDate } = getFiscalYearRange(year);
+            return activities.filter(a => a.date >= startDate && a.date <= endDate);
+        }
+
+        // 令和年号変換
+        function toReiwaYear(year) {
+            return parseInt(year) - 2018;
+        }
+
+        // 期間選択肢を動的生成
+        function generatePeriodOptions() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const periodSelect = document.getElementById('dashboardPeriod');
+            
+            if (activities.length === 0) {
+                // データがない場合は現在月を表示
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth() + 1;
+                periodSelect.innerHTML = `<option value="${currentYear}-${currentMonth.toString().padStart(2, '0')}">${currentYear}年${currentMonth}月</option>`;
+                return;
+            }
+            
+            // 活動データから年月を抽出
+            const yearMonths = new Set();
+            activities.forEach(activity => {
+                const date = new Date(activity.date);
+                const year = date.getFullYear();
+                const month = date.getMonth() + 1;
+                yearMonths.add(`${year}-${month.toString().padStart(2, '0')}`);
+            });
+            
+            // ソート（新しい順）
+            const sortedPeriods = Array.from(yearMonths).sort((a, b) => b.localeCompare(a));
+            
+            // オプションを生成
+            periodSelect.innerHTML = sortedPeriods.map(period => {
+                const [year, month] = period.split('-');
+                return `<option value="${period}">${year}年${parseInt(month)}月</option>`;
+            }).join('');
+            
+            // 最新の月を選択
+            if (sortedPeriods.length > 0) {
+                periodSelect.value = sortedPeriods[0];
+            }
+        }
+
+        
+            // ダッシュボードの更新（月単位版）
+        function updateDashboard() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const selectedPeriod = document.getElementById('dashboardPeriod').value;
+            
+            if (!selectedPeriod) return;
+            
+            const [selectedYear, selectedMonth] = selectedPeriod.split('-');
+            const year = parseInt(selectedYear);
+            const month = parseInt(selectedMonth);
+            
+            // 選択月の活動をフィルタ
+            const monthActivities = activities.filter(activity => {
+                const activityDate = new Date(activity.date);
+                return activityDate.getFullYear() === year && activityDate.getMonth() + 1 === month;
+            });
+            
+            // 年度の活動をフィルタ（黄色タイル用）
+            const fiscalYear = month >= 4 ? year : year - 1;
+            const fiscalYearActivities = getActivitiesInFiscalYear(activities, fiscalYear);
+            
+            // 月間車両出動数（除外設定を考慮したカウント）
+            const monthVehicleActivities = monthActivities.filter(a => a.vehicleDispatch);
+            const countedMonthVehicleActivities = monthVehicleActivities.filter(a => {
+                const countedAttendees = a.attendees.filter(attendeeId => {
+                    const member = members.find(m => m.id === attendeeId);
+                    return member && !member.isExcluded;
+                });
+                return countedAttendees.length > 0;
+            });
+            
+            // 月間活動数（除外設定を考慮したカウント）
+            const countedMonthActivities = monthActivities.filter(a => {
+                const countedAttendees = a.attendees.filter(attendeeId => {
+                    const member = members.find(m => m.id === attendeeId);
+                    return member && !member.isExcluded;
+                });
+                return countedAttendees.length > 0;
+            });
+            
+            // 年度活動数（黄色タイル用）
+            const countedFiscalYearActivities = fiscalYearActivities.filter(a => {
+                const countedAttendees = a.attendees.filter(attendeeId => {
+                    const member = members.find(m => m.id === attendeeId);
+                    return member && !member.isExcluded;
+                });
+                return countedAttendees.length > 0;
+            });
+            
+            // 選択月の全活動を表示（最新順）
+            const allMonthActivities = monthActivities.slice().reverse();
+            
+            const reiwaYear = toReiwaYear(fiscalYear);
+            
+            const dashboardContent = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">${countedMonthActivities.length}</div>
+                        <div>${year}年${month}月の活動回数</div>
+                    </div>
+                    <div style="background: #28a745; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">${countedMonthVehicleActivities.length}</div>
+                        <div>${year}年${month}月の車両出動</div>
+                    </div>
+                    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;">${countedFiscalYearActivities.length}</div>
+                        <div>総活動回数(令和${reiwaYear}年度)</div>
+                    </div>
+                </div>
+                ${currentUser && currentUser.isAdmin ? `
+                    <div style="background: #e9ecef; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
+                        <h4>🔧 管理者機能</h4>
+                        <button class="btn btn-primary" onclick="exportHTML()">HTMLデータ出力</button>
+                        <button class="btn btn-success" onclick="exportExcel()">活動結果エクセル出力</button>
+                        <button class="btn btn-warning" onclick="importData()">データインポート(XLSX)</button>
+                        <button class="btn btn-danger" onclick="logout()">ログアウト</button>
+                    </div>
+                ` : `
+                    <div style="margin-bottom: 1rem;">
+                        <button class="btn btn-danger" onclick="logout()">ログアウト</button>
+                    </div>
+                `}
+                <h4>📋 ${year}年${month}月の活動 (${allMonthActivities.length}件)</h4>
+                <div style="max-height: 400px; overflow-y: auto;">
+                    ${allMonthActivities.map(activity => {
+                        const attendeeNames = activity.attendees.map(id => {
+                            const member = members.find(m => m.id === id);
+                            return member ? member.nickname : id;
+                        }).join(', ');
+                        
+                        const countedAttendees = activity.attendees.filter(attendeeId => {
+                            const member = members.find(m => m.id === attendeeId);
+                            return member && !member.isExcluded;
+                        });
+                        
+                        return `
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid #eee;">
+                                <strong>${activity.content}</strong> (${activity.date})
+                                <br><small>
+                                    ${activity.vehicleDispatch ? '🚗 車両出動' : '📝 通常活動'} 
+                                    ${activity.startTime}〜${activity.endTime} 
+                                    - 出席: ${attendeeNames} (カウント: ${countedAttendees.length}名)
+                                    - 登録者: ${activity.createdBy}
+                                </small>
+                            </div>
+                        `;
+                    }).join('') || '<p>この月に活動が登録されていません。</p>'}
+                </div>
+            `;
+            
+            document.getElementById('dashboardContent').innerHTML = dashboardContent;
+        }
+
+        // HTMLデータ出力機能（完全修正版）
+        function exportHTML() {
+            console.log('HTMLデータ出力ボタンがクリックされました');
+            
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('管理者権限が必要です。現在のユーザー: ' + (currentUser ? currentUser.name : 'ログインしていません'));
+                return;
+            }
+            
+            try {
+                // 現在のデータを取得
+                const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+                const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                
+                // 現在のHTMLドキュメントを取得
+                const htmlContent = document.documentElement.outerHTML;
+                
+                // 既存活動データを現在のデータで置き換え
+                const updatedHTML = htmlContent.replace(
+                    /const existingActivities = \[[\s\S]*?\];/,
+                    `const existingActivities = ${JSON.stringify(activities, null, 12)};`
+                );
+                
+                // ファイル名を生成（現在の日時付き）
+                const now = new Date();
+                const timestamp = now.getFullYear() + 
+                    String(now.getMonth() + 1).padStart(2, '0') + 
+                    String(now.getDate()).padStart(2, '0') + '_' +
+                    String(now.getHours()).padStart(2, '0') + 
+                    String(now.getMinutes()).padStart(2, '0');
+                const filename = `fire_corps_system_${timestamp}.html`;
+                
+                // 完全修正版モーダルを表示
+                showCleanHTMLModal(updatedHTML, filename, activities.length, Object.keys(passwords).length);
+                
+            } catch (error) {
+                console.error('HTMLデータ出力エラー:', error);
+                alert('HTMLデータの出力中にエラーが発生しました。\nエラー詳細: ' + error.message);
+            }
+        }
+
+        // 完全修正版HTMLデータモーダル（不要要素完全除去）
+        function showCleanHTMLModal(htmlContent, filename, activityCount, passwordCount) {
+            // 既存のモーダルがあれば削除
+            const existingModal = document.getElementById('htmlExportModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            const modal = document.createElement('div');
+            modal.id = 'htmlExportModal';
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
+                background: rgba(0,0,0,0.95); z-index: 99999; display: flex; 
+                align-items: center; justify-content: center; padding: 10px;
+            `;
+            
+            const content = document.createElement('div');
+            content.style.cssText = `
+                background: white; padding: 20px; border-radius: 10px; 
+                width: 95vw; height: 95vh; display: flex; flex-direction: column;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                overflow: hidden;
+            `;
+            
+            // HTMLを直接設定（他の要素の影響を受けないように）
+            content.innerHTML = `
+                <div style="margin-bottom: 15px; flex-shrink: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+                    <h2 style="color: #007bff; margin: 0 0 10px 0; font-size: 24px; text-align: center;">🚒 HTMLデータ出力</h2>
+                    <div style="background: #d4edda; padding: 10px; border-radius: 6px; margin-bottom: 10px; font-size: 14px; border: 1px solid #c3e6cb;">
+                        <strong>✅ 出力完了:</strong> 活動記録 ${activityCount}件 | 団員情報 ${members.length}名 | パスワード設定 ${passwordCount}件
+                    </div>
+                    <div style="background: #fff3cd; padding: 10px; border-radius: 6px; font-size: 13px; color: #856404; border: 1px solid #ffeaa7;">
+                        <strong>📋 保存手順:</strong> 
+                        ①下の青いボタンでコピー → ②メモ帳を開く → ③Ctrl+Vで貼り付け → ④「<span style="color: #007bff; font-weight: bold;">${filename}</span>」で保存
+                    </div>
+                </div>
+                
+                <div style="flex: 1; display: flex; flex-direction: column; min-height: 0; gap: 10px;">
+                    <div style="display: flex; gap: 10px; flex-shrink: 0;">
+                        <button id="mainCopyBtn" style="
+                            background: #007bff; color: white; border: none; 
+                            padding: 18px 40px; border-radius: 8px; cursor: pointer; 
+                            font-weight: bold; font-size: 18px; flex: 1; max-width: 300px;
+                            box-shadow: 0 4px 8px rgba(0,123,255,0.3);
+                            transition: all 0.3s;
+                        " onmouseover="this.style.background='#0056b3'" onmouseout="this.style.background='#007bff'">
+                            📋 全選択してコピー
+                        </button>
+                        <button onclick="downloadHTMLFile()" style="
+                            background: #28a745; color: white; border: none; 
+                            padding: 18px 25px; border-radius: 8px; cursor: pointer; 
+                            font-size: 14px; box-shadow: 0 4px 8px rgba(40,167,69,0.3);
+                        ">💾 ダウンロード再試行</button>
+                        <button onclick="closeModal()" style="
+                            background: #dc3545; color: white; border: none; 
+                            padding: 18px 25px; border-radius: 8px; cursor: pointer; 
+                            font-size: 14px; box-shadow: 0 4px 8px rgba(220,53,69,0.3);
+                        ">✖️ 閉じる</button>
+                    </div>
+                    
+                    <textarea id="htmlDataTextarea" style="
+                        flex: 1; width: 100%; 
+                        font-family: 'Courier New', 'Consolas', monospace; 
+                        font-size: 11px; border: 3px solid #007bff; 
+                        border-radius: 6px; padding: 12px; resize: none;
+                        background: #f8f9fa; line-height: 1.3; min-height: 0;
+                        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+                    " readonly>${htmlContent.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+                </div>
+            `;
+            
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+            
+            // グローバル変数として保存
+            window.currentHTMLContent = htmlContent;
+            window.currentFilename = filename;
+            window.currentModal = modal;
+            
+            // コピーボタンのイベントリスナー
+            document.getElementById('mainCopyBtn').addEventListener('click', function() {
+                copyHTMLData();
+            });
+            
+            // ESCキーで閉じる
+            const escHandler = function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+            
+            // モーダル外クリックで閉じる
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+
+        // コピー機能（完全修正版）
+        function copyHTMLData() {
+            const textarea = document.getElementById('htmlDataTextarea');
+            const button = document.getElementById('mainCopyBtn');
+            
+            if (!textarea || !button) {
+                alert('❌ エラー: 必要な要素が見つかりません。');
+                return;
+            }
+            
+            // HTMLコンテンツを直接使用（textareaの値ではなく）
+            const htmlContent = window.currentHTMLContent;
+            
+            if (!htmlContent) {
+                alert('❌ エラー: HTMLデータが見つかりません。');
+                return;
+            }
+            
+            try {
+                // 最新のClipboard APIを優先使用
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(htmlContent).then(() => {
+                        showCopySuccess(button);
+                        alert('✅ HTMLデータをクリップボードにコピーしました！\n\n次の手順:\n1. メモ帳を開く\n2. Ctrl+V で貼り付け\n3. 「' + window.currentFilename + '」として保存');
+                    }).catch(() => {
+                        fallbackCopy(textarea, button, htmlContent);
+                    });
+                } else {
+                    fallbackCopy(textarea, button, htmlContent);
+                }
+            } catch (err) {
+                fallbackCopy(textarea, button, htmlContent);
+            }
+        }
+        
+        // フォールバックコピー機能
+        function fallbackCopy(textarea, button, htmlContent) {
+            try {
+                // textareaに正しいHTMLコンテンツを設定
+                textarea.value = htmlContent;
+                textarea.focus();
+                textarea.select();
+                textarea.setSelectionRange(0, textarea.value.length);
+                
+                const success = document.execCommand('copy');
+                if (success) {
+                    showCopySuccess(button);
+                    alert('✅ HTMLデータをクリップボードにコピーしました！\n\n次の手順:\n1. メモ帳を開く\n2. Ctrl+V で貼り付け\n3. 「' + window.currentFilename + '」として保存');
+                } else {
+                    throw new Error('execCommand failed');
+                }
+            } catch (err) {
+                alert('❌ 自動コピーに失敗しました。\n\n手動でコピーしてください:\n1. テキストエリア内でCtrl+A（全選択）\n2. Ctrl+C（コピー）\n\nまたは、ダウンロード再試行ボタンをお試しください。');
+            }
+        }
+        
+        // コピー成功時の視覚的フィードバック
+        function showCopySuccess(button) {
+            const originalText = button.innerHTML;
+            const originalBg = button.style.background;
+            
+            button.innerHTML = '✅ コピー完了！';
+            button.style.background = '#28a745';
+            button.style.transform = 'scale(1.05)';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = originalBg;
+                button.style.transform = 'scale(1)';
+            }, 2500);
+        }
+
+        // ダウンロード再試行
+        function downloadHTMLFile() {
+            try {
+                const blob = new Blob([window.currentHTMLContent], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = window.currentFilename;
+                downloadLink.style.display = 'none';
+                
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                alert('✅ ダウンロードを開始しました！');
+                
+            } catch (error) {
+                alert('❌ ダウンロードに失敗しました。コピー機能をご利用ください。\nエラー: ' + error.message);
+            }
+        }
+
+        // モーダルを閉じる（完全修正版）
+        function closeModal() {
+            // IDで特定してモーダルを削除
+            const modal = document.getElementById('htmlExportModal');
+            if (modal) {
+                modal.remove();
+            }
+            
+            // グローバル変数をクリア
+            if (window.currentModal) {
+                window.currentModal = null;
+            }
+            window.currentHTMLContent = null;
+            window.currentFilename = null;
+            
+            // イベントリスナーをクリア
+            document.removeEventListener('keydown', arguments.callee);
+        }
+
+        function exportExcel() {
+            alert('活動結果エクセル出力機能は準備中です。');
+        }
+
+        function importData() {
+            alert('データインポート機能は準備中です。');
+        }
+
+        // 活動一覧の表示（編集ボタン追加）
+        function displayActivityList() {
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const sortOrder = document.getElementById('sortOrder').value;
+            const filterVehicle = document.getElementById('filterVehicle').checked;
+            const filterContent = document.getElementById('filterContent').value.toLowerCase();
+            
+            // フィルタリング
+            let filteredActivities = activities.filter(activity => {
+                const matchesVehicle = !filterVehicle || activity.vehicleDispatch;
+                const matchesContent = !filterContent || activity.content.toLowerCase().includes(filterContent);
+                return matchesVehicle && matchesContent;
+            });
+            
+            // ソート
+            filteredActivities.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                return sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
+            });
+            
+            if (filteredActivities.length === 0) {
+                document.getElementById('activityList').innerHTML = '<p>条件に一致する活動が見つかりません。</p>';
+                return;
+            }
+            
+            const activitiesHtml = filteredActivities.map(activity => {
+                const attendeeNames = activity.attendees.map(id => {
+                    const member = members.find(m => m.id === id);
+                    return member ? member.nickname : id;
+                }).join(', ');
+                
+                const countedAttendees = activity.attendees.filter(attendeeId => {
+                    const member = members.find(m => m.id === attendeeId);
+                    return member && !member.isExcluded;
+                });
+                
+                const vehicleInfo = activity.vehicleDispatch ? `
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: ${members.find(m => m.id === activity.driver)?.nickname || '未設定'} | 
+                        筆頭: ${members.find(m => m.id === activity.leader)?.nickname || '未設定'} | 
+                        ${activity.operationType || '未設定'} | 
+                        ${activity.meterDistance || 0}km
+                        ${activity.vehicleMemo ? ` | ${activity.vehicleMemo}` : ''}
+                    </div>
+                ` : '';
+                
+                const editButton = currentUser && currentUser.isAdmin ? 
+                    `<button class="btn btn-warning" onclick="editActivity('${activity.id}')" style="margin-left: 10px;">編集</button>` : '';
+                
+                return `
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">${activity.content}</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">${activity.date}</div>
+                                ${editButton}
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            ${activity.vehicleDispatch ? '🚗 車両出動' : '📝 通常活動'} | 
+                            ${activity.startTime}〜${activity.endTime} | 
+                            出席: ${attendeeNames} (カウント: ${countedAttendees.length}名) | 
+                            登録者: ${activity.createdBy}
+                        </div>
+                        ${vehicleInfo}
+                        ${activity.memo ? `<div style="background: white; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; margin-top: 0.5rem;">${activity.memo}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('activityList').innerHTML = activitiesHtml;
+        }
+
+        // 活動編集機能（管理者限定）
+        function editActivity(activityId) {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('管理者権限が必要です。');
+                return;
+            }
+            
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const activity = activities.find(a => a.id === activityId);
+            
+            if (!activity) {
+                alert('活動が見つかりません。');
+                return;
+            }
+            
+            // 簡易編集ダイアログ
+            const newContent = prompt('活動内容を編集してください:', activity.content);
+            if (newContent === null) return; // キャンセル
+            
+            const newDate = prompt('活動日を編集してください (YYYY-MM-DD):', activity.date);
+            if (newDate === null) return; // キャンセル
+            
+            // 更新
+            activity.content = newContent;
+            activity.date = newDate;
+            activity.lastModified = new Date().toISOString();
+            activity.modifiedBy = currentUser.name;
+            
+            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
+            
+            alert('活動が更新されました。');
+            displayActivityList();
+            updateDashboard();
+        }
+
+        // 団員一覧の表示（簡素化）
+        function displayMembersList() {
+            const membersHtml = members.map(member => `
+                <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-weight: bold;">${member.name}</div>
+                        <div style="color: #666; font-size: 0.9rem;">${member.role}</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary" onclick="showMemberActivities('${member.id}')">活動確認</button>
+                        ${currentUser && currentUser.isAdmin ? `<button class="btn btn-warning" onclick="editMember('${member.id}')">編集</button>` : ''}
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('membersList').innerHTML = membersHtml;
+        }
+
+        // 団員の活動確認
+        function showMemberActivities(memberId) {
+            const member = members.find(m => m.id === memberId);
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const memberActivities = activities.filter(a => a.attendees.includes(memberId));
+            
+            if (memberActivities.length === 0) {
+                alert(`${member.nickname}さんの活動記録はありません。`);
+                return;
+            }
+            
+            const activitiesList = memberActivities.map(activity => 
+                `• ${activity.date} - ${activity.content} ${activity.vehicleDispatch ? '(車両出動)' : ''}`
+            ).join('\n');
+            
+            alert(`${member.nickname}さんの活動記録 (${memberActivities.length}件):\n\n${activitiesList}`);
+        }
+
+        // 団員編集（管理者のみ）
+        function editMember(memberId) {
+            if (!currentUser || !currentUser.isAdmin) {
+                alert('管理者権限が必要です。');
+                return;
+            }
+            
+            const member = members.find(m => m.id === memberId);
+            alert(`団員編集機能は準備中です。\n\n${member.name}さんの情報:\nID: ${member.id}\n氏名: ${member.name}\n役職: ${member.role}\n略称: ${member.nickname}\n出欠カウント: ${member.isExcluded ? '除外する' : '除外しない'}\n管理者権限: ${member.isAdmin ? 'あり' : 'なし'}`);
+        }
+
+        // 今日の日付を設定
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('activityDate').value = today;
+        }
+
+        // 初期化
+        initializePasswords();
+        initializeActivities();
+        
+        console.log('🚒 消防団活動報告システム（修正版）読み込み完了！');
+        console.log('復旧されたデータ:', existingActivities.length + '件の活動');
     </script>
-</body>
-</html>
+
+</body></html>
