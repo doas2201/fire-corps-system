@@ -17,6 +17,15 @@
             align-items: center;
             justify-content: center;
         }
+        
+        body.app-mode {
+            background: #f5f5f5;
+            display: block;
+            align-items: unset;
+            justify-content: unset;
+            padding: 0;
+            margin: 0;
+        }
 
         .login-container {
             background: white;
@@ -128,9 +137,11 @@
             display: none;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 1rem;
             background: #f5f5f5;
             min-height: 100vh;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .header {
@@ -138,10 +149,14 @@
             color: white;
             padding: 1rem;
             border-radius: 10px;
-            margin-bottom: 1rem;
+            margin: 0 0 1rem 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .header h1 {
@@ -162,9 +177,13 @@
         .nav-tabs {
             background: #8b4513;
             border-radius: 5px;
-            margin-bottom: 2rem;
+            margin: 0 0 2rem 0;
             display: flex;
             overflow-x: auto;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .nav-tab {
@@ -351,7 +370,7 @@
         }
     </style>
 </head>
-<body>
+<body class="app-mode">
 <!-- ログイン画面 -->
 <div class="login-container" id="loginContainer" style="display: none;">
 <div class="login-header">
@@ -1760,6 +1779,9 @@
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = user.name + 'さん';
             
+            // ボディのスタイルをアプリモードに変更
+            document.body.classList.add('app-mode');
+            
             // 管理者権限の表示制御
             const adminElements = document.querySelectorAll('.admin-only');
             adminElements.forEach(element => {
@@ -1783,6 +1805,9 @@
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('passwordSetupContainer').style.display = 'none';
             document.getElementById('loginForm').reset();
+            
+            // ボディのスタイルをログインモードに戻す
+            document.body.classList.remove('app-mode');
         }
 
         // タブ切り替え
