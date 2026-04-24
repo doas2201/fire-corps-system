@@ -2,6 +2,9 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>消防団活動報告システム</title>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
 <style>
         * {
             margin: 0;
@@ -358,7 +361,7 @@
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background: #d4edda; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #155724; text-align: center;">
-                Ver.0.0.17
+                Ver.0.0.21
             </div>
 </div>
 <form id="loginForm">
@@ -371,6 +374,10 @@
 <input id="password" placeholder="パスワードを入力してください" required="" type="password">
 </div>
 <button class="login-btn" type="submit">ログイン</button>
+<div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+<input type="checkbox" id="saveLoginId">
+<label for="saveLoginId" style="font-size:0.85rem;color:#666;cursor:pointer;">このデバイスにIDを保存する</label>
+</div>
 <button class="first-time-btn" onclick="showPasswordSetup()" type="button">初回パスワード設定</button>
 </form>
 </div>
@@ -1064,6 +1071,83 @@
         let currentUser = null;
 
         // 団員リスト（Excelデータから復旧）
+        // ===== Firebase設定 =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyAB4X_bKuft1xJmxRPorw2cNT8PMGfUY-M",
+            authDomain: "fire-corps-system.firebaseapp.com",
+            databaseURL: "https://fire-corps-system-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "fire-corps-system",
+            storageBucket: "fire-corps-system.firebasestorage.app",
+            messagingSenderId: "139172770993",
+            appId: "1:139172770993:web:b985c93b160807ec259e90"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Firebaseからデータを読み込む
+        async function loadFromFirebase() {
+            try {
+                const [actSnap, memSnap, pwSnap] = await Promise.all([
+                    db.ref('activities').get(),
+                    db.ref('members').get(),
+                    db.ref('passwords').get()
+                ]);
+
+                if (actSnap.exists()) {
+                    const data = actSnap.val();
+                    const activities = Array.isArray(data) ? data : Object.values(data);
+                    localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
+                }
+
+                if (memSnap.exists()) {
+                    const data = memSnap.val();
+                    const fbMembers = Array.isArray(data) ? data : Object.values(data);
+                    // 既存のmembers配列を更新
+                    fbMembers.forEach(fm => {
+                        const idx = members.findIndex(m => m.id === fm.id);
+                        if (idx !== -1) Object.assign(members[idx], fm);
+                        else members.push(fm);
+                    });
+                    localStorage.setItem('members_cache', JSON.stringify(members));
+                }
+
+                if (pwSnap.exists()) {
+                    localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(pwSnap.val()));
+                }
+
+                return true;
+            } catch(e) {
+                console.warn('Firebase読み込み失敗:', e.message);
+                return false;
+            }
+        }
+
+        // Firebaseにアクティビティを保存
+        async function saveActivitiesToFirebase() {
+            try {
+                const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+                await db.ref('activities').set(activities);
+            } catch(e) {
+                console.warn('Firebase活動保存失敗:', e.message);
+            }
+        }
+
+        // Firebaseに団員情報を保存
+        async function saveMembersToFirebase() {
+            try {
+                const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                await Promise.all([
+                    db.ref('members').set(members),
+                    db.ref('passwords').set(passwords)
+                ]);
+            } catch(e) {
+                console.warn('Firebase団員保存失敗:', e.message);
+            }
+        }
+
+        // ===== Firebase設定ここまで =====
+
         let members = [
             { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', isAdmin: true, isExcluded: false },
             { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', isAdmin: true, isExcluded: false },
@@ -1484,9 +1568,9 @@
         // ログイン処理
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            // 姓名間スペースを含め、入力の全スペースを除去して比較
             const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
             const password = document.getElementById('password').value;
+            const saveId = document.getElementById('saveLoginId').checked;
 
             let user;
 
@@ -1495,7 +1579,6 @@
             } else if (loginId === '0') {
                 user = { id: 'guest', name: 'ゲスト', nickname: 'ゲスト', role: '団員', isAdmin: false, isExcluded: false };
             } else {
-                // 名前（全スペース除去）またはIDで検索
                 user = members.find(m =>
                     m.name.replace(/\s+/g, '') === loginId || m.id === loginId
                 );
@@ -1503,7 +1586,6 @@
                     alert('ユーザーIDが見つかりません。');
                     return;
                 }
-                // パスワードチェック（設定済みの場合のみ）
                 const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
                 const userPassword = passwords[user.name];
                 if (userPassword && userPassword.password !== '') {
@@ -1514,26 +1596,71 @@
                 }
             }
 
+            // ログインIDをデバイスに保存
+            if (saveId) {
+                localStorage.setItem('savedLoginId', document.getElementById('loginId').value);
+            } else {
+                localStorage.removeItem('savedLoginId');
+            }
+
+            // ログイン状態をsessionStorageに保存（更新しても維持）
+            sessionStorage.setItem('currentUser', JSON.stringify(user));
+
+            doLogin(user);
+        });
+
+        function doLogin(user) {
             currentUser = user;
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = user.name + 'さん';
 
+            history.pushState({ loggedIn: true }, '', '');
+
             setTodayDate();
             initializeMemberSelectors();
             initializeMemberAttendance();
-            generatePeriodOptions();
-            displayActivityList();
-            displayMembersList();
+
+            // Firebaseから最新データを自動ロード
+            document.getElementById('dashboardContent').innerHTML =
+                '<div style="text-align:center;padding:2rem;color:#666;">🔄 最新データを取得中...</div>';
+
+            loadFromFirebase().then(success => {
+                if (success) {
+                    initializeMemberSelectors();
+                    initializeMemberAttendance();
+                    console.log('✅ Firebaseから最新データを取得しました');
+                } else {
+                    console.log('⚠️ Firebase取得失敗 - ローカルデータを使用');
+                }
+                generatePeriodOptions();
+                displayActivityList();
+                displayMembersList();
+            });
+        }
+
+        // ブラウザバックでログイン画面に戻らないようにする
+        window.addEventListener('popstate', function(e) {
+            if (currentUser) {
+                // バック操作をキャンセルして現在の状態を維持
+                history.pushState({ loggedIn: true }, '', '');
+            }
         });
 
         // ログアウト
         function logout() {
             currentUser = null;
+            sessionStorage.removeItem('currentUser');
             document.getElementById('loginContainer').style.display = 'block';
             document.getElementById('mainApp').style.display = 'none';
             document.getElementById('passwordSetupContainer').style.display = 'none';
             document.getElementById('loginForm').reset();
+            // 保存IDがあれば再表示
+            const savedId = localStorage.getItem('savedLoginId');
+            if (savedId) {
+                document.getElementById('loginId').value = savedId;
+                document.getElementById('saveLoginId').checked = true;
+            }
         }
 
         // タブ切り替え
@@ -1823,6 +1950,9 @@
             }
 
             localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
+            // Firebaseにも保存
+            saveActivitiesToFirebase();
+
             this.reset();
             document.getElementById('vehicleInfo').style.display = 'none';
             initializeMemberAttendance();
@@ -1830,10 +1960,12 @@
             displayActivityList();
             setTimeout(checkDraftWarning, 100);
 
+            // OneDrive設定済みなら自動エクスポート
+            autoExport();
+
             // ダッシュボードへ遷移
             const dashBtn = document.querySelector('.nav-tab:nth-child(1)');
             showTab('dashboard', dashBtn);
-
             alert(editingId ? '活動が更新されました！' : (isIncomplete ? '活動を登録しました。（未入力項目があります）' : '活動が記録されました！'));
         });
 
@@ -1961,6 +2093,7 @@
                     <button class="btn btn-primary" onclick="exportHTML()">HTMLデータ出力</button>
                     <button class="btn btn-success" onclick="exportExcel()">活動結果エクセル出力</button>
                     <button class="btn btn-warning" onclick="importData()">データインポート(XLSX)</button>
+                    <button class="btn" onclick="showOneDriveSettings()" style="background:#6f42c1;color:white;margin-left:4px;">☁️ OneDrive設定</button>
                 </div>` : '';
 
             const dashboardContent = `
@@ -2053,6 +2186,13 @@
                 htmlContent = htmlContent.replace(
                     /let members = \[[\s\S]*?\];/,
                     `let members = ${JSON.stringify(members, null, 8)};`
+                );
+
+                // OneDrive URLをHTMLに埋め込む（全員が設定不要になる）
+                const savedUrl = localStorage.getItem(ONEDRIVE_URL_KEY) || '';
+                htmlContent = htmlContent.replace(
+                    /const EMBEDDED_ONEDRIVE_URL = .*?;/,
+                    `const EMBEDDED_ONEDRIVE_URL = ${JSON.stringify(savedUrl)};`
                 );
 
                 const now = new Date();
@@ -2169,7 +2309,7 @@
             }
 
             // --- データ準備 ---
-            const actHeaders = ['ActivityID','活動日','活動内容','開始時刻','終了時刻','出動人員','車両出動','運転者','筆頭','運行内容','メーター距離数','給油量','備考','運行開始','運行終了','','活動メモ'];
+            const actHeaders = ['ActivityID','活動日','活動内容','開始時刻','終了時刻','出動人員','車両出動','運転者','筆頭','運行内容','メーター距離数','給油量','備考','運行開始','運行終了','','活動メモ','登録者ID'];
             // Excel出力は古い順（日付→時刻）でソート
             const sortedActivities = [...activities].sort((a, b) => {
                 const ka = `${a.date || '0000-00-00'} ${a.startTime || '00:00'}`;
@@ -2183,9 +2323,9 @@
                 a.startTime || '',
                 a.endTime || '',
                 (a.attendees || []).join(' , '),
-                a.vehicleDispatch,           // boolean
+                a.vehicleDispatch,
                 a.driver || '',
-                (a.leader && a.leader !== a.driver) ? a.leader : '',  // 運転者のみの場合は空欄
+                (a.leader && a.leader !== a.driver) ? a.leader : '',
                 a.operationType || '',
                 a.meterDistance || '',
                 '',
@@ -2193,7 +2333,8 @@
                 a.operationStart || '',
                 a.operationEnd || '',
                 '',                          // P列空白
-                a.memo || ''
+                a.memo || '',
+                a.createdBy || ''            // R列：登録者ID
             ]);
 
             const attHeaders = ['AttendanceID','ActivityID','MemberID','個別開始時間','個別終了時間'];
@@ -2459,7 +2600,7 @@
                                 operationStart: serialToTime(r[13]),
                                 operationEnd: serialToTime(r[14]),
                                 memo: r[16] || '',
-                                createdBy: 'インポート',
+                                createdBy: r[17] || 'インポート',  // R列：登録者ID
                                 createdAt: new Date().toISOString()
                             });
                         }
@@ -2510,6 +2651,9 @@
                         }
 
                         localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(newActivities));
+                        // Firebaseにも同期
+                        await saveActivitiesToFirebase();
+                        await saveMembersToFirebase();
                         alert(`✅ インポート完了！活動: ${newActivities.length}件`);
                         generatePeriodOptions();
                         // フォームのメンバー選択肢も再生成
@@ -2527,7 +2671,201 @@
         }
 
         // 活動一覧の表示（編集ボタン追加）
-        // ===== 活動表示ヘルパー関数 =====
+        // ===== OneDrive自動インポート =====
+        const ONEDRIVE_URL_KEY = 'oneDriveExcelUrl';
+
+        // OneDriveの共有URLをGraph APIのダウンロードURLに変換
+        function convertOneDriveUrl(url) {
+            if (!url) return null;
+            try {
+                // base64エンコードしてGraph API形式に変換
+                const b64 = btoa(url).replace(/=/g,'').replace(/\+/g,'-').replace(/\//g,'_');
+                return `https://graph.microsoft.com/v1.0/shares/u!${b64}/driveItem/content`;
+            } catch(e) {
+                return url;
+            }
+        }
+
+        // HTMLに埋め込まれたOneDrive URL（管理者がHTMLデータ出力時に保存される）
+        const EMBEDDED_ONEDRIVE_URL = localStorage.getItem(ONEDRIVE_URL_KEY) || '';
+
+        // OneDriveからExcelを取得してインポート（非同期）
+        async function importFromOneDrive(onComplete) {
+            // localStorageの設定 → なければHTMLに埋め込まれたURL → なければスキップ
+            const url = localStorage.getItem(ONEDRIVE_URL_KEY) || EMBEDDED_ONEDRIVE_URL;
+            if (!url) {
+                if (onComplete) onComplete(false, 'url_not_set');
+                return;
+            }
+            try {
+                const downloadUrl = convertOneDriveUrl(url);
+                const resp = await fetch(downloadUrl);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const arrayBuffer = await resp.arrayBuffer();
+                const count = await processImportData(new Uint8Array(arrayBuffer));
+                if (onComplete) onComplete(true, count);
+            } catch(e) {
+                console.warn('OneDrive自動インポート失敗:', e.message);
+                if (onComplete) onComplete(false, e.message);
+            }
+        }
+        async function processImportData(data) {
+            async function readZipEntry(data, targetPath) {
+                let i = 0;
+                while (i < data.length - 4) {
+                    if (data[i]===0x50 && data[i+1]===0x4B && data[i+2]===0x03 && data[i+3]===0x04) {
+                        const compMethod = data[i+8]  | (data[i+9]<<8);
+                        const compSize   = data[i+18] | (data[i+19]<<8) | (data[i+20]<<16) | (data[i+21]<<24);
+                        const nameLen    = data[i+26] | (data[i+27]<<8);
+                        const extraLen   = data[i+28] | (data[i+29]<<8);
+                        const nameBytes  = data.slice(i+30, i+30+nameLen);
+                        const name       = new TextDecoder().decode(nameBytes);
+                        const contentStart = i + 30 + nameLen + extraLen;
+                        const compData   = data.slice(contentStart, contentStart + compSize);
+                        if (name === targetPath) {
+                            if (compMethod === 0) return new TextDecoder('utf-8').decode(compData);
+                            if (compMethod === 8) {
+                                for (const fmt of ['deflate-raw','raw']) {
+                                    try {
+                                        const ds = new DecompressionStream(fmt);
+                                        const w = ds.writable.getWriter();
+                                        w.write(compData); w.close();
+                                        const chunks = [];
+                                        const r = ds.readable.getReader();
+                                        while (true) { const {done,value} = await r.read(); if(done)break; chunks.push(value); }
+                                        const total = chunks.reduce((s,c)=>s+c.length,0);
+                                        const out = new Uint8Array(total);
+                                        let pos = 0;
+                                        for(const c of chunks){out.set(c,pos);pos+=c.length;}
+                                        return new TextDecoder('utf-8').decode(out);
+                                    } catch(e){continue;}
+                                }
+                            }
+                        }
+                        i = contentStart + compSize;
+                    } else { i++; }
+                }
+                return null;
+            }
+
+            function parseSheet(xml, sharedStrings) {
+                if (!xml) return [];
+                const doc = new DOMParser().parseFromString(xml, 'application/xml');
+                const rows = [];
+                doc.querySelectorAll('row').forEach(rowEl => {
+                    const row = [];
+                    rowEl.querySelectorAll('c').forEach(c => {
+                        const ref = c.getAttribute('r') || '';
+                        const colStr = ref.replace(/[0-9]/g,'');
+                        let col = 0;
+                        for (let i = 0; i < colStr.length; i++) col = col*26+(colStr.charCodeAt(i)-64);
+                        col--;
+                        const t = c.getAttribute('t') || '';
+                        const vEl = c.querySelector('v');
+                        let val = '';
+                        if (t === 'inlineStr') val = c.querySelector('is > t')?.textContent || c.querySelector('t')?.textContent || '';
+                        else if (t === 's') { const idx = parseInt(vEl?.textContent??'-1'); val = idx>=0?(sharedStrings[idx]||''):''; }
+                        else if (t === 'b') val = vEl?.textContent==='1'?'TRUE':'FALSE';
+                        else if (vEl) val = vEl.textContent || '';
+                        while (row.length <= col) row.push('');
+                        row[col] = val;
+                    });
+                    rows.push(row);
+                });
+                return rows;
+            }
+
+            function serialToDate(v) {
+                if (!v) return '';
+                if (typeof v==='string' && v.match(/^\d{4}-\d{2}-\d{2}$/)) return v;
+                const n = parseFloat(v);
+                if (isNaN(n)||n<1) return String(v);
+                const d = new Date(Math.round((n-25569)*86400000));
+                return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+            }
+
+            function serialToTime(v) {
+                if (!v && v!==0) return '00:00';
+                if (typeof v==='string' && v.includes(':')) return v;
+                const n = parseFloat(v);
+                if (isNaN(n)||n===0) return '00:00';
+                const totalMin = Math.round(n*1440);
+                return `${String(Math.floor(totalMin/60)%24).padStart(2,'0')}:${String(totalMin%60).padStart(2,'0')}`;
+            }
+
+            const ssXml  = await readZipEntry(data, 'xl/sharedStrings.xml');
+            const actXml = await readZipEntry(data, 'xl/worksheets/sheet1.xml');
+            const attXml = await readZipEntry(data, 'xl/worksheets/sheet2.xml');
+            const memXml = await readZipEntry(data, 'xl/worksheets/sheet3.xml');
+
+            const sharedStrings = [];
+            if (ssXml) {
+                new DOMParser().parseFromString(ssXml,'application/xml').querySelectorAll('si').forEach(si => {
+                    sharedStrings.push(si.querySelector('t')?.textContent||'');
+                });
+            }
+
+            const actRows = parseSheet(actXml, sharedStrings);
+            const attRows = parseSheet(attXml, sharedStrings);
+            const memRows = parseSheet(memXml, sharedStrings);
+
+            // Activity
+            const newActivities = [];
+            for (let i = 1; i < actRows.length; i++) {
+                const r = actRows[i];
+                if (!r[0]) continue;
+                newActivities.push({
+                    id: r[0], date: serialToDate(r[1]), content: r[2]||'',
+                    startTime: serialToTime(r[3]), endTime: serialToTime(r[4]),
+                    attendees: r[5] ? r[5].split(' , ').map(s=>s.trim()).filter(Boolean) : [],
+                    vehicleDispatch: r[6]==='TRUE'||r[6]==='1',
+                    driver: r[7]||'', leader: r[8]||'', operationType: r[9]||'',
+                    meterDistance: parseFloat(r[10])||0, vehicleMemo: r[12]||'',
+                    operationStart: serialToTime(r[13]), operationEnd: serialToTime(r[14]),
+                    memo: r[16]||'',
+                    createdBy: r[17]||'インポート',  // R列：登録者ID
+                    createdAt: new Date().toISOString()
+                });
+            }
+
+            // Attendance
+            const individualTimesMap = {};
+            for (let i = 1; i < attRows.length; i++) {
+                const r = attRows[i];
+                if (!r[1]) continue;
+                if (!individualTimesMap[r[1]]) individualTimesMap[r[1]] = {};
+                individualTimesMap[r[1]][r[2]] = { start: serialToTime(r[3]), end: serialToTime(r[4]) };
+            }
+            newActivities.forEach(a => { if (individualTimesMap[a.id]) a.individualTimes = individualTimesMap[a.id]; });
+
+            // Members
+            if (memRows.length > 1) {
+                const passwords = {};
+                for (let i = 1; i < memRows.length; i++) {
+                    const r = memRows[i];
+                    if (!r[0]) continue;
+                    const idx = members.findIndex(m => m.id === r[0]);
+                    const memberData = { id: r[0], name: r[1]||'', role: r[2]||'', nickname: r[3]||'', isExcluded: r[4]==='TRUE'||r[4]==='1', isAdmin: r[5]==='TRUE'||r[5]==='1' };
+                    if (idx !== -1) Object.assign(members[idx], memberData);
+                    else members.push(memberData);
+                    passwords[r[1]] = { password: r[6]||'', isDefault: r[6]===''||!r[6], lastChanged: new Date().toISOString() };
+                }
+                localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+            }
+
+            localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(newActivities));
+            return newActivities.length;
+        }
+
+        // 自動エクスポート（登録・更新・削除後に呼ぶ）
+        function autoExport() {
+            const url = localStorage.getItem(ONEDRIVE_URL_KEY);
+            if (!url) return; // OneDrive未設定なら何もしない
+            // ダウンロードして手動でOneDriveに保存してもらう
+            exportExcel();
+        }
+
+        // ===== OneDrive設定UI =====
 
         // 役職順位
         const ROLE_ORDER = ['部長','副部長','班長','団員','機能別'];
@@ -2648,6 +2986,76 @@
 
         // ===== 活動表示ヘルパー関数ここまで =====
 
+        // OneDrive設定モーダル
+        function showOneDriveSettings() {
+            const current = localStorage.getItem(ONEDRIVE_URL_KEY) || '';
+            const old = document.getElementById('oneDriveModal');
+            if (old) old.remove();
+            const modal = document.createElement('div');
+            modal.id = 'oneDriveModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+            modal.innerHTML = `
+                <div style="background:white;border-radius:10px;padding:1.5rem;width:100%;max-width:500px;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                    <h3 style="margin-bottom:1rem;">☁️ OneDrive自動インポート設定</h3>
+                    <p style="font-size:0.85rem;color:#666;margin-bottom:0.5rem;">
+                        OneDriveのExcelファイルを右クリック→「共有」→「リンクのコピー」で取得したURLを貼り付けてください。<br>
+                        ログイン時に自動でインポートされます。
+                    </p>
+                    <p style="font-size:0.8rem;color:#dc3545;margin-bottom:1rem;">
+                        ⚠️ 共有設定は「リンクを知っている全員が閲覧可能」にしてください。
+                    </p>
+                    <div style="margin-bottom:1rem;">
+                        <label style="font-weight:bold;display:block;margin-bottom:0.5rem;">共有URL</label>
+                        <input type="url" id="oneDriveUrlInput" value="${current}" placeholder="https://1drv.ms/x/..." style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:5px;font-size:0.85rem;">
+                    </div>
+                    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                        <button class="btn btn-success" onclick="saveOneDriveUrl()">保存</button>
+                        <button class="btn btn-primary" onclick="testOneDriveImport()">今すぐテスト</button>
+                        <button class="btn btn-danger" onclick="clearOneDriveUrl()">設定を削除</button>
+                        <button class="btn" onclick="document.getElementById('oneDriveModal').remove()" style="background:#6c757d;color:white;">閉じる</button>
+                    </div>
+                    <div id="oneDriveStatus" style="margin-top:1rem;font-size:0.85rem;"></div>
+                </div>`;
+            document.body.appendChild(modal);
+        }
+
+        function saveOneDriveUrl() {
+            const url = document.getElementById('oneDriveUrlInput').value.trim();
+            if (url) {
+                localStorage.setItem(ONEDRIVE_URL_KEY, url);
+                document.getElementById('oneDriveStatus').innerHTML = '<span style="color:green;">✅ 保存しました。次回ログイン時から自動インポートされます。</span>';
+            } else {
+                localStorage.removeItem(ONEDRIVE_URL_KEY);
+                document.getElementById('oneDriveStatus').innerHTML = '<span style="color:#666;">URLをクリアしました。</span>';
+            }
+        }
+
+        function clearOneDriveUrl() {
+            localStorage.removeItem(ONEDRIVE_URL_KEY);
+            document.getElementById('oneDriveUrlInput').value = '';
+            document.getElementById('oneDriveStatus').innerHTML = '<span style="color:#666;">設定を削除しました。</span>';
+        }
+
+        async function testOneDriveImport() {
+            const status = document.getElementById('oneDriveStatus');
+            status.innerHTML = '<span style="color:#666;">⏳ インポート中...</span>';
+            saveOneDriveUrl();
+            await importFromOneDrive((success, detail) => {
+                if (success) {
+                    status.innerHTML = `<span style="color:green;">✅ インポート成功！（${detail}件）<br>次回のHTMLデータ出力時にURLが全員分のHTMLに埋め込まれます。</span>`;
+                    generatePeriodOptions();
+                    initializeMemberSelectors();
+                    initializeMemberAttendance();
+                    displayActivityList();
+                    displayMembersList();
+                } else {
+                    status.innerHTML = `<span style="color:red;">❌ 失敗: ${detail}<br>
+                    ・URLが正しいか確認してください<br>
+                    ・OneDriveの共有設定が「リンクを知っている全員」になっているか確認してください</span>`;
+                }
+            });
+        }
+
         // 日付＋時刻の複合ソートキー生成
         function sortKey(activity) {
             const date = activity.date || '0000-00-00';
@@ -2726,6 +3134,8 @@
             if (!confirm(`「${activity.content || '（活動内容未入力）'}」(${activity.date}) を削除しますか？\nこの操作は元に戻せません。`)) return;
             const updated = activities.filter(a => a.id !== activityId);
             localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(updated));
+            saveActivitiesToFirebase();
+            autoExport();
             generatePeriodOptions();
             displayActivityList();
             checkDraftWarning();
@@ -2896,6 +3306,8 @@
             members[idx].isExcluded = document.getElementById('editIsExcluded').checked;
             members[idx].isAdmin = document.getElementById('editIsAdmin').checked;
             document.getElementById('memberEditModal').remove();
+            // Firebaseに保存
+            saveMembersToFirebase();
             displayMembersList();
             alert('団員情報を更新しました。');
         }
@@ -2940,7 +3352,31 @@
             setTimeout(checkDraftWarning, 100);
         });
 
-        console.log('🚒 消防団活動報告システム Ver.0.0.17 読み込み完了！');
+        // ページ読み込み時の復元処理
+        (function initOnLoad() {
+            // 保存されたログインIDを自動入力
+            const savedId = localStorage.getItem('savedLoginId');
+            if (savedId) {
+                document.getElementById('loginId').value = savedId;
+                document.getElementById('saveLoginId').checked = true;
+            }
+
+            // sessionStorageにログイン状態が残っていれば自動ログイン（更新時対応）
+            const savedUser = sessionStorage.getItem('currentUser');
+            if (savedUser) {
+                try {
+                    const user = JSON.parse(savedUser);
+                    // membersから最新情報を取得（権限が変わっている可能性があるため）
+                    const freshUser = members.find(m => m.id === user.id);
+                    doLogin(freshUser || user);
+                    return;
+                } catch(e) {
+                    sessionStorage.removeItem('currentUser');
+                }
+            }
+        })();
+
+        console.log('🚒 消防団活動報告システム Ver.0.0.21 読み込み完了！');
     </script>
 
 </body></html>
