@@ -353,12 +353,12 @@
 </head>
 <body>
 <!-- ログイン画面 -->
-<div class="login-container" id="loginContainer" style="display: none;">
+<div class="login-container" id="loginContainer" style="display: block;">
 <div class="login-header">
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background: #d4edda; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #155724; text-align: center;">
-                Ver.0.0.12
+                Ver.0.0.17
             </div>
 </div>
 <form id="loginForm">
@@ -398,11 +398,11 @@
 </form>
 </div>
 <!-- メインアプリケーション -->
-<div class="main-app" id="mainApp" style="display: block;">
+<div class="main-app" id="mainApp" style="display: none;">
 <div class="header">
 <h1>🚒 消防団活動報告システム</h1>
 <div style="display: flex; align-items: center; gap: 0.75rem;">
-<span id="currentUser" style="color:white;">赤土大輔さん</span>
+<span id="currentUser" style="color:white;"></span>
 <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
 </div>
@@ -418,10 +418,10 @@
 <h3>📊 ダッシュボード</h3>
 <div class="period-selector">
 <label for="dashboardPeriod">表示期間:</label>
-<select id="dashboardPeriod" onchange="updateDashboard()"><option value="2026-04">2026年4月</option><option value="2026-03">2026年3月</option><option value="2026-02">2026年2月</option></select>
+<select id="dashboardPeriod" onchange="updateDashboard()"></select>
 </div>
 <!-- 入力途中データの警告 -->
-<div id="draftWarning" style="display: none; background: rgb(255, 243, 205); border: 1px solid rgb(255, 193, 7); border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1rem; color: rgb(133, 100, 4);">
+<div id="draftWarning" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:0.75rem 1rem; margin-bottom:1rem; color:#856404;">
 ⚠️ <strong>新規活動報告</strong>に入力途中のデータがあります。
 <button class="btn btn-warning" style="margin-left:0.5rem; padding:0.25rem 0.75rem; font-size:0.85rem;" onclick="showTab('activities', document.querySelector('.nav-tab:nth-child(2)'))">入力画面へ</button>
 </div>
@@ -430,78 +430,13 @@
 ⚠️ <strong>未入力項目のある活動</strong>があります。
 <button class="btn btn-danger" style="margin-left:0.5rem; padding:0.25rem 0.75rem; font-size:0.85rem;" onclick="showTab('activity-list', document.querySelector('.nav-tab:nth-child(3)'))">活動一覧で確認</button>
 </div>
-<div id="dashboardContent">
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">5</div>
-                        <div>2026年4月の活動回数</div>
-                    </div>
-                    <div style="background: #28a745; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">2</div>
-                        <div>2026年4月の車両出動</div>
-                    </div>
-                    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">5</div>
-                        <div>総活動回数(令和8年度)</div>
-                    </div>
-                </div>
-                
-                <div style="background: #e9ecef; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
-                    <h4>🔧 管理者機能</h4>
-                    <button class="btn btn-primary" onclick="exportHTML()">HTMLデータ出力</button>
-                    <button class="btn btn-success" onclick="exportExcel()">活動結果エクセル出力</button>
-                    <button class="btn btn-warning" onclick="importData()">データインポート(XLSX)</button>
-                </div>
-                <h4>📋 2026年4月の活動 (5件)</h4>
-                <div style="max-height: 400px; overflow-y: auto;">
-                    
-                            <div onclick="showActivityDetail('4abfeff9')" style="padding: 0.5rem 0px; border-bottom: 1px solid rgb(238, 238, 238); cursor: pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
-                                <div style="font-weight:bold;">規律訓練<span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span></div>
-                                <small style="color:#555;">
-                                    <strong>2026年4月19日（日）</strong> |
-                                    08:00〜11:30 |
-                                    出席: 部長以下5名
-                                </small>
-                            </div>
-                            <div onclick="showActivityDetail('a625b503')" style="padding:0.5rem 0;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
-                                <div style="font-weight:bold;">写生会</div>
-                                <small style="color:#555;">
-                                    <strong>2026年4月17日（金）</strong> |
-                                    10:30〜12:00 |
-                                    出席: 班長1名
-                                </small>
-                            </div>
-                            <div onclick="showActivityDetail('6dc9c5a2')" style="padding:0.5rem 0;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
-                                <div style="font-weight:bold;">新入団員役員研修会</div>
-                                <small style="color:#555;">
-                                    <strong>2026年4月14日（火）</strong> |
-                                    20:00〜20:30 |
-                                    出席: 部長以下1名
-                                </small>
-                            </div>
-                            <div onclick="showActivityDetail('a0ad3012')" style="padding:0.5rem 0;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
-                                <div style="font-weight:bold;">入退団式<span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span></div>
-                                <small style="color:#555;">
-                                    <strong>2026年4月5日（日）</strong> |
-                                    07:00〜12:00 |
-                                    出席: 部長以下6名
-                                </small>
-                            </div>
-                            <div onclick="showActivityDetail('95ded5c8')" style="padding:0.5rem 0;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
-                                <div style="font-weight:bold;">入退団式準備</div>
-                                <small style="color:#555;">
-                                    <strong>2026年4月4日（土）</strong> |
-                                    15:00〜17:00 |
-                                    出席: 部長以下1名
-                                </small>
-                            </div>
-                </div></div>
+<div id="dashboardContent"></div>
 </div>
 </div>
 <!-- 新規活動報告 -->
 <div class="tab-content" id="activities">
 <div class="card">
-<h3 data-form-title="">📝 新しい活動を報告</h3>
+<h3 data-form-title>📝 新しい活動を報告</h3>
 <div id="incompleteWarning" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:0.75rem 1rem; margin-bottom:1rem; color:#856404;">
 ⚠️ 未入力項目のある活動があります。追加情報の入力を完了させてください。
 </div>
@@ -513,7 +448,7 @@
 <div class="form-group">
 <label for="activityContent">活動内容</label>
 <input id="activityContent" onfocus="showActivityHistory()" oninput="showActivitySuggestions(this.value)" placeholder="活動内容を入力" type="text">
-<div id="activitySuggestions" style="display: none; background: white; border-width: medium 1px 1px; border-style: none solid solid; border-color: currentcolor rgb(204, 204, 204) rgb(204, 204, 204); border-image: initial; max-height: 150px; overflow-y: auto; position: relative; z-index: 1000;"><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('先月情報【仮入力】')">先月情報【仮入力】</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('パレード・水利点検')">パレード・水利点検</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('出火報')">出火報</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('警戒・部会')">警戒・部会</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('車両給油')">車両給油</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('警戒')">警戒</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('さくらぎ防災訓練')">さくらぎ防災訓練</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('広報団員説明会')">広報団員説明会</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('分団引継ぎ　分団会議')">分団引継ぎ　分団会議</div><div style="padding: 0.5rem; cursor: pointer; border-bottom: 1px solid #eee;" onclick="selectActivitySuggestion('入退団式準備')">入退団式準備</div></div>
+<div id="activitySuggestions" style="display: none; background: white; border: 1px solid #ccc; border-top: none; max-height: 150px; overflow-y: auto; position: relative; z-index: 1000;"></div>
 </div>
 <div class="form-group">
 <label>車両出動</label>
@@ -523,7 +458,7 @@
 </div>
 </div>
 <!-- 車両情報（車両出動時のみ表示） -->
-<div class="vehicle-info" id="vehicleInfo" style="display: none;">
+<div class="vehicle-info" id="vehicleInfo">
 <h4>🚗 車両情報</h4>
 <div class="form-group">
 <label for="driver">運転者</label>
@@ -571,209 +506,14 @@
 <!-- 出動人員 -->
 <div class="form-group">
 <label>出動人員</label>
-<div class="member-attendance" id="memberAttendance"><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No5" onchange="toggleIndividualTime('No5')">
-                        大野
-                    </label>
-                    <div class="individual-time" id="individual-No5">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No5')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No5" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No3" onchange="toggleIndividualTime('No3')">
-                        平野
-                    </label>
-                    <div class="individual-time" id="individual-No3">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No3')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No3" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No6" onchange="toggleIndividualTime('No6')">
-                        赤土
-                    </label>
-                    <div class="individual-time" id="individual-No6">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No6')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No6" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No4" onchange="toggleIndividualTime('No4')">
-                        田中
-                    </label>
-                    <div class="individual-time" id="individual-No4">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No4')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No4" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No7" onchange="toggleIndividualTime('No7')">
-                        春沢
-                    </label>
-                    <div class="individual-time" id="individual-No7">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No7')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No7" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No8" onchange="toggleIndividualTime('No8')">
-                        傑
-                    </label>
-                    <div class="individual-time" id="individual-No8">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No8')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No8" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No9" onchange="toggleIndividualTime('No9')">
-                        小島
-                    </label>
-                    <div class="individual-time" id="individual-No9">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No9')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No9" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No10" onchange="toggleIndividualTime('No10')">
-                        土肥
-                    </label>
-                    <div class="individual-time" id="individual-No10">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No10')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No10" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No11" onchange="toggleIndividualTime('No11')">
-                        相沢
-                    </label>
-                    <div class="individual-time" id="individual-No11">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No11')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No11" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No12" onchange="toggleIndividualTime('No12')">
-                        青木
-                    </label>
-                    <div class="individual-time" id="individual-No12">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No12')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No12" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No1" onchange="toggleIndividualTime('No1')">
-                        新居
-                    </label>
-                    <div class="individual-time" id="individual-No1">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No1')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No1" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No2" onchange="toggleIndividualTime('No2')">
-                        竪月
-                    </label>
-                    <div class="individual-time" id="individual-No2">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No2')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No2" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div><div class="member-item">
-                    <label>
-                        <input type="checkbox" class="member-checkbox" value="No0" onchange="toggleIndividualTime('No0')">
-                        笠間
-                    </label>
-                    <div class="individual-time" id="individual-No0">
-                        <label>
-                            <input type="checkbox" onchange="toggleIndividualTimeInputs('No0')">
-                            個別時間登録
-                        </label>
-                        <div id="time-inputs-No0" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
-                        </div>
-                    </div>
-                </div></div>
+<div class="member-attendance" id="memberAttendance"></div>
 </div>
 <div class="form-group">
 <label for="activityMemo">活動メモ</label>
 <textarea id="activityMemo" placeholder="活動の詳細を入力してください" rows="3"></textarea>
 </div>
 <button class="btn btn-success" id="submitBtn" type="submit">活動を登録</button>
-<button class="btn btn-secondary" id="cancelEditBtn" type="button" onclick="cancelEdit()" style="display: none; background: rgb(108, 117, 125); color: white;">キャンセル</button>
+<button class="btn btn-secondary" id="cancelEditBtn" type="button" onclick="cancelEdit()" style="display:none; background:#6c757d; color:white;">キャンセル</button>
 </form>
 </div>
 </div>
@@ -800,278 +540,366 @@
 </label>
 </div>
 <div id="activityList">
-                    <div onclick="showActivityDetail('4abfeff9')" style="background: rgb(248, 249, 250); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid rgb(220, 53, 69); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">規律訓練</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('4abfeff9')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('4abfeff9')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">テスト</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-21</div>
+                                <button class="btn btn-warning" onclick="editActivity('1776736617828')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年4月19日（日）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            08:00〜11:30 | 出席: 部長以下5名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            12:00〜17:00 | 
+                            出席: 大野, 平野, 赤土, 傑, 笠間 (カウント: 4名) | 
+                            登録者: 赤土大輔
                         </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 平野 | 
+                        筆頭: 大野 | 
+                        火災 | 
+                        915km
+                         | test
                     </div>
-                    <div onclick="showActivityDetail('a625b503')" style="background: rgb(248, 249, 250); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid rgb(40, 167, 69); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">写生会</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('a625b503')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('a625b503')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
-                            </div>
-                        </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年4月17日（金）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            10:30〜12:00 | 出席: 班長1名
-                        </div>
+                
+                        <div style="background: white; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; margin-top: 0.5rem;">tesuto</div>
                     </div>
-                    <div onclick="showActivityDetail('6dc9c5a2')" style="background: rgb(248, 249, 250); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid rgb(40, 167, 69); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">新入団員役員研修会</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('6dc9c5a2')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('6dc9c5a2')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">新入団員役員研修会</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-14</div>
+                                <button class="btn btn-warning" onclick="editActivity('6dc9c5a2')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年4月14日（火）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            20:00〜20:30 | 出席: 部長以下1名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 相沢 (カウント: 2名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                        
                     </div>
-                    <div onclick="showActivityDetail('a0ad3012')" style="background: rgb(248, 249, 250); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid rgb(220, 53, 69); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">入退団式</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('a0ad3012')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('a0ad3012')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">入退団式</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-05</div>
+                                <button class="btn btn-warning" onclick="editActivity('a0ad3012')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年4月5日（日）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            07:00〜12:00 | 出席: 部長以下6名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 平野, 赤土, 田中, 春沢, 土肥, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 土肥 | 
+                        筆頭: 大野 | 
+                        訓練 | 
+                        910km
+                        
                     </div>
-                    <div onclick="showActivityDetail('95ded5c8')" style="background: rgb(248, 249, 250); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid rgb(40, 167, 69); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">入退団式準備</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('95ded5c8')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('95ded5c8')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
-                            </div>
-                        </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年4月4日（土）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            15:00〜17:00 | 出席: 部長以下1名
-                        </div>
+                
+                        
                     </div>
-                    <div onclick="showActivityDetail('e8651e75')" style="background: rgb(248, 249, 250); border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid rgb(40, 167, 69); cursor: pointer; transition: background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">分団引継ぎ　分団会議</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('e8651e75')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('e8651e75')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">入退団式準備</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-04-04</div>
+                                <button class="btn btn-warning" onclick="editActivity('95ded5c8')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月31日（火）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            19:00〜20:15 | 出席: 部長以下2名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 平野 (カウント: 2名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                        
                     </div>
-                    <div onclick="showActivityDetail('68a874eb')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #28a745;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">広報団員説明会</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('68a874eb')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('68a874eb')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">分団引継ぎ　分団会議</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-31</div>
+                                <button class="btn btn-warning" onclick="editActivity('e8651e75')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月17日（火）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            20:05〜20:45 | 出席: 班長1名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 大野, 相沢, 新居 (カウント: 3名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                        
                     </div>
-                    <div onclick="showActivityDetail('a64871e8')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #28a745;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">出火報</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('a64871e8')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('a64871e8')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">広報団員説明会</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-17</div>
+                                <button class="btn btn-warning" onclick="editActivity('68a874eb')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月16日（月）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            13:40〜14:30 | 出席: 副部長1名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 相沢 (カウント: 1名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                        
                     </div>
-                    <div onclick="showActivityDetail('4cabd1ff')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #28a745;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">出火報</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('4cabd1ff')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('4cabd1ff')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">出火報</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-16</div>
+                                <button class="btn btn-warning" onclick="editActivity('a64871e8')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月9日（月）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            20:10〜20:30 | 出席: 副部長以下2名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 赤土 (カウント: 1名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                        
                     </div>
-                    <div onclick="showActivityDetail('6e40a452')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">警戒</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('6e40a452')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('6e40a452')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">出火報</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-09</div>
+                                <button class="btn btn-warning" onclick="editActivity('4cabd1ff')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月7日（土）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            19:30〜22:00 | 出席: 部長以下6名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 平野, 赤土 (カウント: 3名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                        
                     </div>
-                    <div onclick="showActivityDetail('e864b55a')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">さくらぎ防災訓練</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('e864b55a')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('e864b55a')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">警戒</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-07</div>
+                                <button class="btn btn-warning" onclick="editActivity('6e40a452')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月5日（木）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            09:30〜12:00 | 出席: 副部長以下1名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 田中, 大野, 赤土, 土肥, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 竪月 | 
+                        筆頭: 大野 | 
+                        警戒 | 
+                        905km
+                        
                     </div>
-                    <div onclick="showActivityDetail('45889a2a')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">警戒</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('45889a2a')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('45889a2a')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
-                            </div>
-                        </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月4日（水）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            19:30〜21:30 | 出席: 副部長以下4名
-                        </div>
+                
+                        
                     </div>
-                    <div onclick="showActivityDetail('9ac67c99')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">車両給油</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('9ac67c99')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('9ac67c99')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">さくらぎ防災訓練</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-05</div>
+                                <button class="btn btn-warning" onclick="editActivity('e864b55a')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月2日（月）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            17:30〜18:00 | 出席: 副部長1名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 平野 (カウント: 2名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 新居 | 
+                        筆頭: 平野 | 
+                        訓練 | 
+                        894km
+                        
                     </div>
-                    <div onclick="showActivityDetail('fd9f390d')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">パレード・水利点検</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('fd9f390d')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('fd9f390d')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
-                            </div>
-                        </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月1日（日）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            09:00〜13:30 | 出席: 副部長以下6名
-                        </div>
+                
+                        
                     </div>
-                    <div onclick="showActivityDetail('7d6ac393')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #28a745;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">出火報</span>
-                                
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('7d6ac393')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('7d6ac393')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">警戒</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-04</div>
+                                <button class="btn btn-warning" onclick="editActivity('45889a2a')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月1日（日）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            17:20〜17:50 | 出席: 副部長以下4名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 竪月, 平野, 大野, 赤土, 相沢 (カウント: 5名) | 
+                            登録者: システム復旧
                         </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 相沢 | 
+                        筆頭: 竪月 | 
+                        警戒 | 
+                        893km
+                        
                     </div>
-                    <div onclick="showActivityDetail('1f5e06e2')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">警戒・部会</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('1f5e06e2')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('1f5e06e2')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
-                            </div>
-                        </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年3月1日（日）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            19:30〜22:30 | 出席: 副部長以下6名
-                        </div>
+                
+                        
                     </div>
-                    <div onclick="showActivityDetail('7a19aae1')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid #dc3545;cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">先月情報【仮入力】</span>
-                                <span style="background:#dc3545;color:white;font-size:0.75rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.4rem;font-weight:normal;">🚗 車両出動</span>
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('7a19aae1')" style="margin-left:10px;padding:0.25rem 0.75rem;font-size:0.85rem;">編集</button>
-                       <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('7a19aae1')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">車両給油</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-02</div>
+                                <button class="btn btn-warning" onclick="editActivity('9ac67c99')" style="margin-left: 10px;">編集</button>
                             </div>
                         </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">2026年2月28日（土）</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
-                            18:00〜18:30 | 出席: 機能別1名
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 赤土 (カウント: 1名) | 
+                            登録者: システム復旧
                         </div>
-                    </div></div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 赤土 | 
+                        筆頭: 未設定 | 
+                        点検等 | 
+                        878km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #28a745;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">出火報</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-01</div>
+                                <button class="btn btn-warning" onclick="editActivity('7d6ac393')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            📝 通常活動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 平野, 赤土, 相沢 (カウント: 5名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">警戒・部会</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-01</div>
+                                <button class="btn btn-warning" onclick="editActivity('1f5e06e2')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 平野, 大野, 赤土, 春沢, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 相沢 | 
+                        筆頭: 竪月 | 
+                        警戒 | 
+                        874km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">パレード・水利点検</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-03-01</div>
+                                <button class="btn btn-warning" onclick="editActivity('fd9f390d')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居, 竪月, 平野, 大野, 赤土, 春沢, 相沢 (カウント: 7名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 新居 | 
+                        筆頭: 竪月 | 
+                        訓練 | 
+                        857km
+                        
+                    </div>
+                
+                        
+                    </div>
+                
+                    <div style="background: #f8f9fa; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border-left: 4px solid #dc3545;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="font-weight: bold; font-size: 1.1rem;">先月情報【仮入力】</div>
+                            <div style="display: flex; align-items: center;">
+                                <div style="color: #666; font-size: 0.9rem;">2026-02-28</div>
+                                <button class="btn btn-warning" onclick="editActivity('7a19aae1')" style="margin-left: 10px;">編集</button>
+                            </div>
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">
+                            🚗 車両出動 | 
+                            00:00〜00:00 | 
+                            出席: 新居 (カウント: 1名) | 
+                            登録者: システム復旧
+                        </div>
+                        
+                    <div style="margin-top: 0.5rem; font-size: 0.8rem; color: #666;">
+                        運転: 新居 | 
+                        筆頭: 新居 | 
+                        点検等 | 
+                        820km
+                        
+                    </div>
+                
+                        
+                    </div>
+                </div>
 </div>
 </div>
 <!-- 団員管理 -->
@@ -1236,7 +1064,7 @@
         let currentUser = null;
 
         // 団員リスト（Excelデータから復旧）
-        const members = [
+        let members = [
             { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', isAdmin: true, isExcluded: false },
             { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', isAdmin: true, isExcluded: false },
             { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', isAdmin: true, isExcluded: false },
@@ -1255,65 +1083,12 @@
         // 既存活動データ（Excelから復旧）
         const existingActivities = [
           {
-                    "id": "7a19aae1",
-                    "date": "2026-02-28",
-                    "content": "先月情報【仮入力】",
-                    "startTime": "18:00",
-                    "endTime": "18:30",
-                    "attendees": [
-                              "No1"
-                    ],
-                    "vehicleDispatch": true,
-                    "driver": "No1",
-                    "leader": "",
-                    "operationType": "点検等",
-                    "meterDistance": 820,
-                    "vehicleMemo": "",
-                    "operationStart": "18:00",
-                    "operationEnd": "18:30",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
-          },
-          {
-                    "id": "fd9f390d",
-                    "date": "2026-03-01",
-                    "content": "パレード・水利点検",
-                    "startTime": "09:00",
-                    "endTime": "13:30",
-                    "attendees": [
-                              "No1",
-                              "No2",
-                              "No3",
-                              "No5",
-                              "No6",
-                              "No7",
-                              "No11"
-                    ],
-                    "vehicleDispatch": true,
-                    "driver": "No1",
-                    "leader": "No2",
-                    "operationType": "訓練",
-                    "meterDistance": 857,
-                    "vehicleMemo": "",
-                    "operationStart": "09:00",
-                    "operationEnd": "13:30",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z",
-                    "individualTimes": {
-                              "No3": {
-                                        "start": "09:00",
-                                        "end": "12:00"
-                              }
-                    }
-          },
-          {
                     "id": "7d6ac393",
                     "date": "2026-03-01",
                     "content": "出火報",
-                    "startTime": "17:20",
-                    "endTime": "17:50",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No1",
                               "No2",
@@ -1321,24 +1096,17 @@
                               "No6",
                               "No11"
                     ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-01T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "1f5e06e2",
                     "date": "2026-03-01",
                     "content": "警戒・部会",
-                    "startTime": "19:30",
-                    "endTime": "22:30",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No1",
                               "No2",
@@ -1348,51 +1116,43 @@
                               "No7",
                               "No11"
                     ],
-                    "vehicleDispatch": true,
                     "driver": "No11",
                     "leader": "No2",
                     "operationType": "警戒",
                     "meterDistance": 874,
-                    "vehicleMemo": "",
-                    "operationStart": "20:00",
-                    "operationEnd": "22:30",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z",
-                    "individualTimes": {
-                              "No1": {
-                                        "start": "21:30",
-                                        "end": "22:30"
-                              }
-                    }
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-01T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "9ac67c99",
                     "date": "2026-03-02",
                     "content": "車両給油",
-                    "startTime": "17:30",
-                    "endTime": "18:00",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No6"
                     ],
-                    "vehicleDispatch": true,
                     "driver": "No6",
                     "leader": "",
                     "operationType": "点検等",
                     "meterDistance": 878,
-                    "vehicleMemo": "",
-                    "operationStart": "17:30",
-                    "operationEnd": "18:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-02T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "45889a2a",
                     "date": "2026-03-04",
                     "content": "警戒",
-                    "startTime": "19:30",
-                    "endTime": "21:30",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No2",
                               "No3",
@@ -1400,60 +1160,23 @@
                               "No6",
                               "No11"
                     ],
-                    "vehicleDispatch": true,
                     "driver": "No11",
                     "leader": "No2",
                     "operationType": "警戒",
                     "meterDistance": 893,
-                    "vehicleMemo": "",
-                    "operationStart": "20:30",
-                    "operationEnd": "21:30",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z",
-                    "individualTimes": {
-                              "No2": {
-                                        "start": "20:30",
-                                        "end": "21:30"
-                              },
-                              "No5": {
-                                        "start": "20:30",
-                                        "end": "21:30"
-                              },
-                              "No11": {
-                                        "start": "20:30",
-                                        "end": "21:30"
-                              }
-                    }
-          },
-          {
-                    "id": "e864b55a",
-                    "date": "2026-03-05",
-                    "content": "さくらぎ防災訓練",
-                    "startTime": "09:30",
-                    "endTime": "12:00",
-                    "attendees": [
-                              "No1",
-                              "No3"
-                    ],
-                    "vehicleDispatch": true,
-                    "driver": "No1",
-                    "leader": "No3",
-                    "operationType": "訓練",
-                    "meterDistance": 894,
-                    "vehicleMemo": "",
-                    "operationStart": "09:30",
-                    "operationEnd": "12:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-04T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "6e40a452",
                     "date": "2026-03-07",
                     "content": "警戒",
-                    "startTime": "19:30",
-                    "endTime": "22:00",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No1",
                               "No2",
@@ -1463,154 +1186,165 @@
                               "No10",
                               "No11"
                     ],
-                    "vehicleDispatch": true,
                     "driver": "No2",
                     "leader": "No5",
                     "operationType": "警戒",
                     "meterDistance": 905,
-                    "vehicleMemo": "",
-                    "operationStart": "20:00",
-                    "operationEnd": "22:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z",
-                    "individualTimes": {
-                              "No1": {
-                                        "start": "19:30",
-                                        "end": "20:30"
-                              },
-                              "No11": {
-                                        "start": "20:30",
-                                        "end": "22:00"
-                              },
-                              "No10": {
-                                        "start": "20:30",
-                                        "end": "22:00"
-                              }
-                    }
-          },
-          {
-                    "id": "4cabd1ff",
-                    "date": "2026-03-09",
-                    "content": "出火報",
-                    "startTime": "20:10",
-                    "endTime": "20:30",
-                    "attendees": [
-                              "No1",
-                              "No3",
-                              "No6"
-                    ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
                     "operationStart": "00:00",
                     "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-07T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "7a19aae1",
+                    "date": "2026-02-28",
+                    "content": "先月情報【仮入力】",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1"
+                    ],
+                    "driver": "No1",
+                    "leader": "No1",
+                    "operationType": "点検等",
+                    "meterDistance": 820,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-02-28T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "fd9f390d",
+                    "date": "2026-03-01",
+                    "content": "パレード・水利点検",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No2",
+                              "No3",
+                              "No5",
+                              "No6",
+                              "No7",
+                              "No11"
+                    ],
+                    "driver": "No1",
+                    "leader": "No2",
+                    "operationType": "訓練",
+                    "meterDistance": 857,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-01T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "e864b55a",
+                    "date": "2026-03-05",
+                    "content": "さくらぎ防災訓練",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No3"
+                    ],
+                    "driver": "No1",
+                    "leader": "No3",
+                    "operationType": "訓練",
+                    "meterDistance": 894,
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-05T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "a64871e8",
                     "date": "2026-03-16",
                     "content": "出火報",
-                    "startTime": "13:40",
-                    "endTime": "14:30",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No6"
                     ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-16T00:00:00.000Z",
+                    "memo": ""
+          },
+          {
+                    "id": "4cabd1ff",
+                    "date": "2026-03-09",
+                    "content": "出火報",
                     "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "startTime": "00:00",
+                    "endTime": "00:00",
+                    "attendees": [
+                              "No1",
+                              "No3",
+                              "No6"
+                    ],
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-09T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "68a874eb",
                     "date": "2026-03-17",
                     "content": "広報団員説明会",
-                    "startTime": "20:05",
-                    "endTime": "20:45",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No11"
                     ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-17T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "e8651e75",
                     "date": "2026-03-31",
                     "content": "分団引継ぎ　分団会議",
-                    "startTime": "19:00",
-                    "endTime": "20:15",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No5",
                               "No11",
                               "No1"
                     ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z",
-                    "individualTimes": {
-                              "No11": {
-                                        "start": "19:00",
-                                        "end": "19:30"
-                              }
-                    }
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-03-31T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "95ded5c8",
                     "date": "2026-04-04",
                     "content": "入退団式準備",
-                    "startTime": "15:00",
-                    "endTime": "17:00",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No5",
                               "No3"
                     ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-04-04T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "a0ad3012",
                     "date": "2026-04-05",
                     "content": "入退団式",
-                    "startTime": "07:00",
-                    "endTime": "12:00",
+                    "vehicleDispatch": true,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No5",
                               "No3",
@@ -1620,104 +1354,67 @@
                               "No10",
                               "No11"
                     ],
-                    "vehicleDispatch": true,
                     "driver": "No10",
                     "leader": "No5",
                     "operationType": "訓練",
                     "meterDistance": 910,
-                    "vehicleMemo": "",
-                    "operationStart": "07:30",
-                    "operationEnd": "12:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "operationStart": "00:00",
+                    "operationEnd": "00:00",
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-04-05T00:00:00.000Z",
+                    "memo": ""
           },
           {
                     "id": "6dc9c5a2",
                     "date": "2026-04-14",
                     "content": "新入団員役員研修会",
-                    "startTime": "20:00",
-                    "endTime": "20:30",
+                    "vehicleDispatch": false,
+                    "startTime": "00:00",
+                    "endTime": "00:00",
                     "attendees": [
                               "No5",
                               "No11"
                     ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "createdBy": "システム復旧",
+                    "createdAt": "2026-04-14T00:00:00.000Z",
+                    "memo": ""
           },
           {
-                    "id": "a625b503",
-                    "date": "2026-04-17",
-                    "content": "写生会",
-                    "startTime": "10:30",
-                    "endTime": "12:00",
-                    "attendees": [
-                              "No9"
-                    ],
-                    "vehicleDispatch": false,
-                    "driver": "",
-                    "leader": "",
-                    "operationType": "",
-                    "meterDistance": 0,
-                    "vehicleMemo": "",
-                    "operationStart": "00:00",
-                    "operationEnd": "00:00",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
-          },
-          {
-                    "id": "4abfeff9",
-                    "date": "2026-04-19",
-                    "content": "規律訓練",
-                    "startTime": "08:00",
-                    "endTime": "11:30",
+                    "id": "1776736617828",
+                    "date": "2026-04-21",
+                    "content": "テスト",
+                    "vehicleDispatch": true,
+                    "startTime": "12:00",
+                    "endTime": "17:00",
                     "attendees": [
                               "No5",
                               "No3",
                               "No6",
-                              "No4",
-                              "No10",
-                              "No11",
+                              "No8",
                               "No0"
                     ],
-                    "vehicleDispatch": true,
-                    "driver": "No10",
+                    "memo": "tesuto",
+                    "createdAt": "2026-04-21T01:56:57.828Z",
+                    "createdBy": "赤土大輔",
+                    "driver": "No3",
                     "leader": "No5",
-                    "operationType": "訓練",
-                    "meterDistance": 914,
-                    "vehicleMemo": "",
-                    "operationStart": "08:20",
-                    "operationEnd": "11:20",
-                    "memo": "",
-                    "createdBy": "インポート",
-                    "createdAt": "2026-04-23T06:53:30.639Z"
+                    "operationType": "火災",
+                    "meterDistance": 915,
+                    "operationStart": "12:30",
+                    "operationEnd": "16:30",
+                    "vehicleMemo": "test"
           }
 ];
 
-        // パスワード管理
+        // パスワード管理（未設定は空欄、'password'は初期値として使わない）
         function initializePasswords() {
             let passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
-            
+            // 新規メンバーのみエントリを作る（パスワードは空欄）
             members.forEach(member => {
-                if (!passwords[member.name]) {
-                    passwords[member.name] = {
-                        password: 'password',
-                        isDefault: true,
-                        lastChanged: new Date().toISOString()
-                    };
+                if (!(member.name in passwords)) {
+                    passwords[member.name] = { password: '', isDefault: true, lastChanged: new Date().toISOString() };
                 }
             });
-            
             localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
             return passwords;
         }
@@ -1787,30 +1484,30 @@
         // ログイン処理
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const loginId = document.getElementById('loginId').value.trim();
+            // 姓名間スペースを含め、入力の全スペースを除去して比較
+            const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
             const password = document.getElementById('password').value;
 
             let user;
 
-            // Ver.0系: 空欄ログイン→管理者、ID=0→一般ゲスト
             if (loginId === '') {
-                // 管理者権限ありのダミーユーザー
                 user = { id: 'admin', name: '管理者', nickname: '管理者', role: '管理者', isAdmin: true, isExcluded: false };
             } else if (loginId === '0') {
-                // 一般権限ダミーユーザー
                 user = { id: 'guest', name: 'ゲスト', nickname: 'ゲスト', role: '団員', isAdmin: false, isExcluded: false };
             } else {
-                // 通常ログイン
-                user = members.find(m => m.name.replace(/\s+/g, '') === loginId || m.id === loginId);
+                // 名前（全スペース除去）またはIDで検索
+                user = members.find(m =>
+                    m.name.replace(/\s+/g, '') === loginId || m.id === loginId
+                );
                 if (!user) {
                     alert('ユーザーIDが見つかりません。');
                     return;
                 }
-                // Ver.0系はパスワード不要（空欄でも通過）
-                if (password !== '') {
-                    const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
-                    const userPassword = passwords[user.name];
-                    if (userPassword && userPassword.password !== password) {
+                // パスワードチェック（設定済みの場合のみ）
+                const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                const userPassword = passwords[user.name];
+                if (userPassword && userPassword.password !== '') {
+                    if (userPassword.password !== password) {
                         alert('パスワードが正しくありません。');
                         return;
                     }
@@ -1822,7 +1519,6 @@
             document.getElementById('mainApp').style.display = 'block';
             document.getElementById('currentUser').textContent = user.name + 'さん';
 
-            // ログイン後の初期化
             setTodayDate();
             initializeMemberSelectors();
             initializeMemberAttendance();
@@ -1851,6 +1547,17 @@
             document.getElementById(tabName).classList.add('active');
             if (clickedBtn) clickedBtn.classList.add('active');
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // 活動一覧タブは常にリセットして再表示
+            if (tabName === 'activity-list') {
+                document.getElementById('sortOrder').value = 'desc';
+                document.getElementById('filterVehicle').checked = false;
+                document.getElementById('filterContent').value = '';
+                const sugg = document.getElementById('filterSuggestions');
+                if (sugg) sugg.style.display = 'none';
+                window._memberFilter = null;
+                displayActivityList();
+            }
         }
 
         // 車両情報の表示切り替え
@@ -2284,7 +1991,7 @@
                         const dateDisplay = buildDateDisplay(activity.date);
                         const vehicleBadge = buildVehicleBadge(activity, countedLen);
                         return `
-                            <div onclick="showActivityDetail('${activity.id}')" style="padding:0.5rem 0;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
+                            <div data-activity-id="${activity.id}" class="activity-card" style="padding:0.5rem 0;border-bottom:1px solid #eee;cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
                                 <div style="font-weight:bold;">${activity.content || '（活動内容未入力）'}${vehicleBadge}</div>
                                 <small style="color:#555;">
                                     <strong>${dateDisplay}</strong> |
@@ -2336,10 +2043,16 @@
                 const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
                 let htmlContent = document.documentElement.outerHTML;
 
-                // existingActivitiesを現在のデータで更新
+                // 活動データを現在のlocalStorageの内容で更新
                 htmlContent = htmlContent.replace(
                     /const existingActivities = \[[\s\S]*?\];/,
-                    `const existingActivities = ${JSON.stringify(activities, null, 10)};`
+                    `const existingActivities = ${JSON.stringify(activities, null, 8)};`
+                );
+
+                // membersデータを現在の状態（インポート後の情報）で更新
+                htmlContent = htmlContent.replace(
+                    /let members = \[[\s\S]*?\];/,
+                    `let members = ${JSON.stringify(members, null, 8)};`
                 );
 
                 const now = new Date();
@@ -2457,7 +2170,13 @@
 
             // --- データ準備 ---
             const actHeaders = ['ActivityID','活動日','活動内容','開始時刻','終了時刻','出動人員','車両出動','運転者','筆頭','運行内容','メーター距離数','給油量','備考','運行開始','運行終了','','活動メモ'];
-            const actRows = activities.map(a => [
+            // Excel出力は古い順（日付→時刻）でソート
+            const sortedActivities = [...activities].sort((a, b) => {
+                const ka = `${a.date || '0000-00-00'} ${a.startTime || '00:00'}`;
+                const kb = `${b.date || '0000-00-00'} ${b.startTime || '00:00'}`;
+                return ka.localeCompare(kb);
+            });
+            const actRows = sortedActivities.map(a => [
                 a.id || '',
                 a.date || '',
                 a.content || '',
@@ -2490,7 +2209,7 @@
 
             const memHeaders = ['MemberID','氏名','役職','略称','IsExcluded','IsAdmin','Password'];
             const memRows = members.map(m => {
-                const pw = passwords[m.name] ? passwords[m.name].password : 'password';
+                const pw = passwords[m.name] ? passwords[m.name].password : '';
                 return [m.id, m.name, m.role, m.nickname, m.isExcluded, m.isAdmin, pw];
             });
 
@@ -2757,13 +2476,35 @@
                             if (individualTimesMap[a.id]) a.individualTimes = individualTimesMap[a.id];
                         });
 
-                        // Members（パスワード更新）
+                        // Members（団員情報＋パスワード更新）
                         if (memRows.length > 1) {
                             const passwords = {};
                             for (let i = 1; i < memRows.length; i++) {
                                 const r = memRows[i];
                                 if (!r[0]) continue;
-                                passwords[r[1]] = { password: r[6] || 'password', isDefault: false, lastChanged: new Date().toISOString() };
+                                const memberId   = r[0];
+                                const memberName = r[1] || '';
+                                const role       = r[2] || '';
+                                const nickname   = r[3] || '';
+                                const isExcluded = r[4] === 'TRUE' || r[4] === '1';
+                                const isAdmin    = r[5] === 'TRUE' || r[5] === '1';
+                                const pw         = r[6] || '';
+
+                                // membersグローバル配列を更新
+                                const idx = members.findIndex(m => m.id === memberId);
+                                if (idx !== -1) {
+                                    members[idx].name       = memberName;
+                                    members[idx].role       = role;
+                                    members[idx].nickname   = nickname;
+                                    members[idx].isExcluded = isExcluded;
+                                    members[idx].isAdmin    = isAdmin;
+                                } else {
+                                    // 新規団員追加
+                                    members.push({ id: memberId, name: memberName, role, nickname, isExcluded, isAdmin });
+                                }
+
+                                // パスワード（空欄でも登録）
+                                passwords[memberName] = { password: pw, isDefault: pw === '', lastChanged: new Date().toISOString() };
                             }
                             localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
                         }
@@ -2771,6 +2512,9 @@
                         localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(newActivities));
                         alert(`✅ インポート完了！活動: ${newActivities.length}件`);
                         generatePeriodOptions();
+                        // フォームのメンバー選択肢も再生成
+                        initializeMemberSelectors();
+                        initializeMemberAttendance();
                         displayActivityList();
                         displayMembersList();
                     } catch (err) {
@@ -2904,6 +2648,13 @@
 
         // ===== 活動表示ヘルパー関数ここまで =====
 
+        // 日付＋時刻の複合ソートキー生成
+        function sortKey(activity) {
+            const date = activity.date || '0000-00-00';
+            const time = activity.startTime || '00:00';
+            return `${date} ${time}`;
+        }
+
         function displayActivityList() {
             const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
             const sortOrder = document.getElementById('sortOrder').value;
@@ -2919,9 +2670,8 @@
             });
 
             filteredActivities.sort((a, b) => {
-                return sortOrder === 'desc'
-                    ? (b.date || '').localeCompare(a.date || '')
-                    : (a.date || '').localeCompare(b.date || '');
+                const ka = sortKey(a), kb = sortKey(b);
+                return sortOrder === 'desc' ? kb.localeCompare(ka) : ka.localeCompare(kb);
             });
 
             if (filteredActivities.length === 0) {
@@ -2948,7 +2698,7 @@
                        <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('${activity.id}')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>` : '';
 
                 return `
-                    <div onclick="showActivityDetail('${activity.id}')" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
+                    <div data-activity-id="${activity.id}" class="activity-card" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
                         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
                             <div>
                                 <span style="font-weight:bold;font-size:1.1rem;">${activity.content || '（活動内容未入力）'}</span>
@@ -3166,6 +2916,16 @@
             document.getElementById('activityDate').value = today;
         }
 
+        // 活動カードのタップ（イベント委譲方式）
+        document.addEventListener('click', function(e) {
+            const card = e.target.closest('.activity-card');
+            if (!card) return;
+            // 編集・削除ボタンのクリックは除外
+            if (e.target.closest('button')) return;
+            const id = card.dataset.activityId;
+            if (id) showActivityDetail(id);
+        });
+
         // 初期化
         initializePasswords();
         initializeActivities();
@@ -3180,7 +2940,7 @@
             setTimeout(checkDraftWarning, 100);
         });
 
-        console.log('🚒 消防団活動報告システム Ver.0.0.12 読み込み完了！');
+        console.log('🚒 消防団活動報告システム Ver.0.0.17 読み込み完了！');
     </script>
 
 </body></html>
