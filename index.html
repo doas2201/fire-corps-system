@@ -483,7 +483,7 @@
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background:#fff0f0;border:1px solid #ffcccc;padding:0.5rem;border-radius:5px;margin-top:1rem;font-size:0.85rem;color:var(--red);text-align:center;font-weight:bold;">
-Ver.0.1.4
+Ver.1.0.0
 </div>
 </div>
 <form id="loginForm">
@@ -552,15 +552,10 @@ Ver.0.1.4
 <label for="dashboardPeriod">表示期間:</label>
 <select id="dashboardPeriod" onchange="updateDashboard()"></select>
 </div>
-<!-- 入力途中データの警告 -->
-<div id="draftWarning" style="display:none; background:#fff3cd; border:1px solid #ffc107; border-radius:6px; padding:0.75rem 1rem; margin-bottom:1rem; color:#856404;">
-⚠️ <strong>新規活動報告</strong>に入力途中のデータがあります。
-<button class="btn btn-warning" style="margin-left:0.5rem; padding:0.25rem 0.75rem; font-size:0.85rem;" onclick="showTab('activities', document.querySelector('.nav-tab:nth-child(2)'))">入力画面へ</button>
-</div>
-<!-- 未入力項目のある活動の警告 -->
+<!-- 未完了活動の警告（1つに統合） -->
 <div id="dashboardIncompleteWarning" style="display:none; background:#f8d7da; border:1px solid #f5c6cb; border-radius:6px; padding:0.75rem 1rem; margin-bottom:1rem; color:#721c24;">
 ⚠️ <strong>未入力項目のある活動</strong>があります。
-<button class="btn btn-danger" style="margin-left:0.5rem; padding:0.25rem 0.75rem; font-size:0.85rem;" onclick="showTab('activity-list', document.querySelector('.nav-tab:nth-child(3)'))">活動一覧で確認</button>
+<button class="btn btn-danger" id="editIncompleteBtn" style="margin-left:0.5rem; padding:0.25rem 0.75rem; font-size:0.85rem;">編集する</button>
 </div>
 <div id="dashboardContent"></div>
 </div>
@@ -574,35 +569,23 @@ Ver.0.1.4
 </div>
 <form id="activityForm">
 
-<!-- 活動日・時刻（横並び） -->
+<!-- 活動日 -->
 <div class="form-group">
-<label>活動日・時刻</label>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;align-items:end;">
-    <div>
-        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">日付</div>
-        <input id="activityDate" type="date" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
-    </div>
-    <div>
-        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">開始</div>
-        <input id="startTime" type="time" onblur="syncTimes('start');formatTimeInput(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
-    </div>
-    <div>
-        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">終了</div>
-        <input id="endTime" type="time" onblur="syncTimes('end');formatTimeInput(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
-    </div>
-</div>
-<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.3rem;">※時刻は0945のように4桁で入力可</div>
+<label>活動日</label>
+<input id="activityDate" type="date" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
 </div>
 
+<!-- 活動内容 -->
 <div class="form-group">
 <label for="activityContent">活動内容</label>
 <input id="activityContent" onfocus="showActivityHistory()" oninput="showActivitySuggestions(this.value)" placeholder="活動内容を入力" type="text">
-<div id="activitySuggestions" style="display: none; background: white; border: 1px solid #ccc; border-top: none; max-height: 150px; overflow-y: auto; position: relative; z-index: 1000;"></div>
+<div id="activitySuggestions" style="display:none;background:white;border:1px solid #ccc;border-top:none;max-height:150px;overflow-y:auto;position:relative;z-index:1000;"></div>
 </div>
 
+<!-- 車両出動 -->
 <div class="form-group">
 <label>車両出動</label>
-<div style="display: flex; gap: 1rem;">
+<div style="display:flex;gap:1rem;">
 <label><input checked="" name="vehicleDispatch" onchange="toggleVehicleInfo()" type="radio" value="false"> 無</label>
 <label><input name="vehicleDispatch" onchange="toggleVehicleInfo()" type="radio" value="true"> 有</label>
 </div>
@@ -636,17 +619,33 @@ Ver.0.1.4
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
 <div class="form-group">
 <label for="operationStart">運行開始</label>
-<input id="operationStart" type="time" onblur="syncTimes('operationStart');formatTimeInput(this)" oninput="autoFormatTime(this)">
+<input id="operationStart" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)">
 </div>
 <div class="form-group">
 <label for="operationEnd">運行終了</label>
-<input id="operationEnd" type="time" onblur="syncTimes('operationEnd');formatTimeInput(this)" oninput="autoFormatTime(this)">
+<input id="operationEnd" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)">
 </div>
 </div>
 <div class="form-group">
 <label for="vehicleMemo">備考</label>
 <textarea id="vehicleMemo" placeholder="車両に関する備考" rows="2"></textarea>
 </div>
+</div>
+
+<!-- 開始・終了時刻 -->
+<div class="form-group">
+<label>活動時間</label>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
+<div>
+<div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">開始</div>
+<input id="startTime" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+</div>
+<div>
+<div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">終了</div>
+<input id="endTime" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+</div>
+</div>
+<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.3rem;">※ 4桁入力（例：0945）で自動変換</div>
 </div>
 
 <!-- 出動人員 -->
@@ -2039,8 +2038,13 @@ Ver.0.1.4
             const vehicleDispatch = document.querySelector('input[name="vehicleDispatch"]:checked').value === 'true';
             const attendees = Array.from(document.querySelectorAll('.member-checkbox:checked')).map(cb => cb.value);
             const content = document.getElementById('activityContent').value.trim();
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
+            // type=textの時刻入力を変換
+            applyTimeFormat(document.getElementById('startTime'));
+            applyTimeFormat(document.getElementById('endTime'));
+            applyTimeFormat(document.getElementById('operationStart'));
+            applyTimeFormat(document.getElementById('operationEnd'));
+            const startTime = getTimeValue('startTime');
+            const endTime = getTimeValue('endTime');
 
             // 不完全フラグ：活動内容・時刻・人員のいずれかが未入力
             const isIncomplete = !content || !startTime || !endTime || attendees.length === 0;
@@ -2065,8 +2069,12 @@ Ver.0.1.4
                 const id = cb.value;
                 const timeInputs = document.getElementById(`time-inputs-${id}`);
                 if (timeInputs && timeInputs.style.display !== 'none') {
-                    const start = timeInputs.querySelector('.individual-start').value;
-                    const end = timeInputs.querySelector('.individual-end').value;
+                    const startEl = timeInputs.querySelector('.individual-start');
+                    const endEl = timeInputs.querySelector('.individual-end');
+                    if (startEl) applyTimeFormat(startEl);
+                    if (endEl) applyTimeFormat(endEl);
+                    const start = startEl ? startEl.value : '';
+                    const end = endEl ? endEl.value : '';
                     if (start || end) individualTimes[id] = { start: start || '00:00', end: end || '00:00' };
                 }
             });
@@ -2078,8 +2086,8 @@ Ver.0.1.4
                 activityData.leader = document.getElementById('leader').value;
                 activityData.operationType = document.getElementById('operationType').value;
                 activityData.meterDistance = parseInt(document.getElementById('meterDistance').value) || 0;
-                activityData.operationStart = document.getElementById('operationStart').value;
-                activityData.operationEnd = document.getElementById('operationEnd').value;
+                activityData.operationStart = getTimeValue('operationStart');
+                activityData.operationEnd = getTimeValue('operationEnd');
                 activityData.vehicleMemo = document.getElementById('vehicleMemo').value;
             }
 
@@ -2301,28 +2309,35 @@ Ver.0.1.4
             checkDraftWarning();
         }
 
-        // 入力途中データの警告
+        // 警告チェック（未完了活動のみ・統合版）
         function checkDraftWarning() {
-            // フォームの入力途中チェック
-            const date = document.getElementById('activityDate') ? document.getElementById('activityDate').value : '';
-            const content = document.getElementById('activityContent') ? document.getElementById('activityContent').value : '';
-            const isEditMode = document.getElementById('activityForm').dataset.editingId;
-            // 日付が今日以外 or 内容・人員が入力されている場合のみ下書きとみなす
-            const today = new Date().toISOString().split('T')[0];
-            const attendeesChecked = document.querySelectorAll('.member-checkbox:checked').length;
-            const hasDraft = !isEditMode && ((date && date !== today) || content || attendeesChecked > 0);
-            const warning = document.getElementById('draftWarning');
-            if (warning) warning.style.display = hasDraft ? 'block' : 'none';
-
-            // 未完了活動の警告（新規活動報告タブ）
             const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
-            const hasIncomplete = activities.some(a => a.isIncomplete);
-            const incWarn = document.getElementById('incompleteWarning');
-            if (incWarn) incWarn.style.display = hasIncomplete ? 'block' : 'none';
+            const incompleteActivities = activities.filter(a => a.isIncomplete);
+            const warning = document.getElementById('dashboardIncompleteWarning');
+            if (!warning) return;
 
-            // ダッシュボードの未完了警告バナー
-            const dashIncWarn = document.getElementById('dashboardIncompleteWarning');
-            if (dashIncWarn) dashIncWarn.style.display = hasIncomplete ? 'block' : 'none';
+            if (incompleteActivities.length > 0) {
+                warning.style.display = 'block';
+                // 最新の未完了活動の編集ページへ直接飛ぶ
+                const newest = incompleteActivities.sort((a,b) => (b.date||'').localeCompare(a.date||''))[0];
+                const btn = document.getElementById('editIncompleteBtn');
+                if (btn) {
+                    btn.onclick = () => {
+                        editActivity(newest.id);
+                    };
+                    btn.textContent = `「${newest.content || '未入力'}」を編集`;
+                }
+            } else {
+                warning.style.display = 'none';
+            }
+
+            // 旧draftWarningは非表示に
+            const dw = document.getElementById('draftWarning');
+            if (dw) dw.style.display = 'none';
+
+            // 新規活動報告タブの警告
+            const incWarn = document.getElementById('incompleteWarning');
+            if (incWarn) incWarn.style.display = incompleteActivities.length > 0 ? 'block' : 'none';
         }
 
         // HTMLデータ出力（直接ダウンロード版）
@@ -3223,7 +3238,7 @@ Ver.0.1.4
             const attendees = activity.attendees || [];
             const attendeeNames = attendees.map(id => {
                 const m = members.find(m => m.id === id);
-                return m ? `${m.name}（${m.role}）` : id;
+                return m ? m.nickname : id;
             }).join('、') || '未設定';
 
             const countedLen = attendees.filter(id => {
@@ -3413,20 +3428,18 @@ Ver.0.1.4
                        <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('${activity.id}')" style="margin-left:4px;padding:0.25rem 0.75rem;font-size:0.85rem;">削除</button>` : '';
 
                 return `
-                    <div data-activity-id="${activity.id}" class="activity-card" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:1rem;border-left:4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};cursor:pointer;transition:background 0.15s;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
-                        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:0.25rem;">
-                            <div>
-                                <span style="font-weight:bold;font-size:1.1rem;">${activity.content || '（活動内容未入力）'}</span>
-                                ${vehicleBadge}${incompleteBadge}
-                            </div>
-                            <div style="display:flex;align-items:center;flex-shrink:0;margin-left:0.5rem;">
-                                ${editButton}
-                            </div>
-                        </div>
-                        <div style="color:#555;font-size:0.85rem;font-weight:bold;">${dateDisplay}</div>
-                        <div style="color:#666;font-size:0.9rem;margin-top:0.25rem;">
+                    <div data-activity-id="${activity.id}" class="activity-card" style="background:#f8f9fa;border-radius:8px;padding:1rem;margin-bottom:0.75rem;border-left:4px solid ${activity.vehicleDispatch ? '#dc3545' : '#28a745'};cursor:pointer;transition:background 0.15s;position:relative;" onmouseover="this.style.background='#e9ecef'" onmouseout="this.style.background='#f8f9fa'">
+                        ${vehicleBadge ? `<div style="position:absolute;top:0.6rem;right:0.6rem;">${vehicleBadge}</div>` : ''}
+                        ${incompleteBadge ? `<div style="margin-bottom:0.25rem;">${incompleteBadge}</div>` : ''}
+                        <div style="font-weight:bold;font-size:1rem;padding-right:${vehicleBadge ? '6rem' : '0'};">${activity.content || '（活動内容未入力）'}</div>
+                        <div style="color:#555;font-size:0.82rem;font-weight:bold;margin-top:0.2rem;">${dateDisplay}</div>
+                        <div style="color:#666;font-size:0.85rem;margin-top:0.15rem;">
                             ${activity.startTime}〜${activity.endTime} | 出席: ${attendeeDisplay}
                         </div>
+                        ${currentUser ? `<div style="margin-top:0.5rem;display:flex;gap:0.4rem;">
+                            <button class="btn btn-warning" onclick="event.stopPropagation();editActivity('${activity.id}')" style="padding:0.25rem 0.65rem;font-size:0.8rem;">編集</button>
+                            <button class="btn btn-danger" onclick="event.stopPropagation();deleteActivity('${activity.id}')" style="padding:0.25rem 0.65rem;font-size:0.8rem;">削除</button>
+                        </div>` : ''}
                     </div>`;
             }).join('');
 
@@ -3647,29 +3660,44 @@ Ver.0.1.4
             alert(`${memberName}さんのパスワードと\nログインIDを初期状態にリセットしました。`);
         }
 
-        // 4桁入力で時刻変換（0945→09:45）
+        // 4桁入力→HH:MM変換（type=text対応）
         function autoFormatTime(input) {
             let val = input.value.replace(/[^0-9]/g, '');
+            if (val.length > 4) val = val.slice(0, 4);
+            input.value = val;
+        }
+
+        function applyTimeFormat(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val.length === 3) val = '0' + val;
             if (val.length >= 4) {
                 const h = val.substring(0, 2);
                 const m = val.substring(2, 4);
                 if (parseInt(h) <= 23 && parseInt(m) <= 59) {
                     input.value = `${h}:${m}`;
+                    return;
                 }
             }
+            if (val.length === 0) input.value = '';
         }
 
-        function formatTimeInput(input) {
-            let val = input.value.replace(/[^0-9]/g, '');
-            if (val.length === 3) val = '0' + val;
-            if (val.length === 4) {
-                const h = val.substring(0, 2);
-                const m = val.substring(2, 4);
-                if (parseInt(h) <= 23 && parseInt(m) <= 59) {
-                    input.value = `${h}:${m}`;
-                }
+        // フォームから時刻値を取得（HH:MM形式で返す）
+        function getTimeValue(id) {
+            const val = document.getElementById(id).value.trim().replace(/[^0-9:]/g, '');
+            if (!val) return '';
+            if (val.includes(':')) return val;
+            // 数字のみの場合
+            let digits = val.replace(/:/g, '');
+            if (digits.length === 3) digits = '0' + digits;
+            if (digits.length >= 4) {
+                const h = digits.substring(0, 2);
+                const m = digits.substring(2, 4);
+                if (parseInt(h) <= 23 && parseInt(m) <= 59) return `${h}:${m}`;
             }
+            return '';
         }
+
+        function formatTimeInput(input) { applyTimeFormat(input); }
 
         // フォーム全クリア→ダッシュボードへ
         function clearActivityForm() {
@@ -3745,7 +3773,7 @@ Ver.0.1.4
             }
         })();
 
-        console.log('🚒 消防団活動報告システム Ver.0.1.4 読み込み完了！');
+        console.log('🚒 消防団活動報告システム Ver.1.0.0 読み込み完了！');
     </script>
 
 </body></html>
