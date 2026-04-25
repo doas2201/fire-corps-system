@@ -190,6 +190,48 @@
             white-space: nowrap;
         }
 
+        .header {
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+            color: white;
+            padding: 0.875rem 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            letter-spacing: 0.02em;
+        }
+
+        .header-bottom {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 0.4rem;
+        }
+
+        .header-user {
+            font-size: 0.9rem;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
         .logout-btn {
             background: rgba(255,255,255,0.2);
             color: white;
@@ -197,7 +239,7 @@
             padding: 0.35rem 0.85rem;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
             transition: background 0.2s;
             white-space: nowrap;
@@ -205,7 +247,47 @@
 
         .logout-btn:hover { background: rgba(255,255,255,0.3); }
 
-        /* ===== ナビタブ ===== */
+        .individual-time {
+            display: none;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+        }
+
+        .individual-time > label {
+            display: flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            font-weight: normal !important;
+            color: var(--text-light);
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 0.82rem;
+        }
+
+        .individual-time input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .indiv-time-inputs {
+            display: none;
+            margin-top: 0.4rem;
+            display: none;
+            align-items: center;
+            gap: 0.3rem;
+            flex-wrap: wrap;
+        }
+
+        .indiv-time-inputs input[type="time"] {
+            width: 100px !important;
+            padding: 0.25rem 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 0.82rem;
+        }
         .nav-tabs {
             background: var(--navy);
             border-radius: var(--radius);
@@ -401,7 +483,7 @@
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background:#fff0f0;border:1px solid #ffcccc;padding:0.5rem;border-radius:5px;margin-top:1rem;font-size:0.85rem;color:var(--red);text-align:center;font-weight:bold;">
-Ver.0.1.2
+Ver.0.1.4
 </div>
 </div>
 <form id="loginForm">
@@ -447,10 +529,12 @@ Ver.0.1.2
 <!-- メインアプリケーション -->
 <div class="main-app" id="mainApp" style="display: none;">
 <div class="header">
+<div class="header-top">
 <h1>🚒 消防団活動報告システム</h1>
-<div class="header-right">
+</div>
+<div class="header-bottom">
 <span class="header-user" id="currentUser"></span>
-<button class="logout-btn" onclick="showMyPage()" style="background:rgba(255,255,255,0.15);margin-right:0.4rem;">👤 マイページ</button>
+<button class="logout-btn" onclick="showMyPage()" style="background:rgba(255,255,255,0.15);">👤 マイページ</button>
 <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
 </div>
@@ -489,15 +573,33 @@ Ver.0.1.2
 ⚠️ 未入力項目のある活動があります。追加情報の入力を完了させてください。
 </div>
 <form id="activityForm">
+
+<!-- 活動日・時刻（横並び） -->
 <div class="form-group">
-<label for="activityDate">活動日</label>
-<input id="activityDate" required="" type="date">
+<label>活動日・時刻</label>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;align-items:end;">
+    <div>
+        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">日付</div>
+        <input id="activityDate" type="date" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
+    </div>
+    <div>
+        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">開始</div>
+        <input id="startTime" type="time" onblur="syncTimes('start');formatTimeInput(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
+    </div>
+    <div>
+        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">終了</div>
+        <input id="endTime" type="time" onblur="syncTimes('end');formatTimeInput(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.9rem;">
+    </div>
 </div>
+<div style="font-size:0.75rem;color:var(--text-light);margin-top:0.3rem;">※時刻は0945のように4桁で入力可</div>
+</div>
+
 <div class="form-group">
 <label for="activityContent">活動内容</label>
 <input id="activityContent" onfocus="showActivityHistory()" oninput="showActivitySuggestions(this.value)" placeholder="活動内容を入力" type="text">
 <div id="activitySuggestions" style="display: none; background: white; border: 1px solid #ccc; border-top: none; max-height: 150px; overflow-y: auto; position: relative; z-index: 1000;"></div>
 </div>
+
 <div class="form-group">
 <label>車両出動</label>
 <div style="display: flex; gap: 1rem;">
@@ -505,16 +607,17 @@ Ver.0.1.2
 <label><input name="vehicleDispatch" onchange="toggleVehicleInfo()" type="radio" value="true"> 有</label>
 </div>
 </div>
+
 <!-- 車両情報（車両出動時のみ表示） -->
-<div class="vehicle-info" id="vehicleInfo">
+<div class="vehicle-info" id="vehicleInfo" style="display:none;">
 <h4>🚗 車両情報</h4>
 <div class="form-group">
 <label for="driver">運転者</label>
-<select id="driver"><option value="">選択してください</option><option value="No5">大野</option><option value="No3">平野</option><option value="No6">赤土</option><option value="No4">田中</option><option value="No7">春沢</option><option value="No8">傑</option><option value="No9">小島</option><option value="No10">土肥</option><option value="No11">相沢</option><option value="No12">青木</option><option value="No1">新居</option><option value="No2">竪月</option></select>
+<select id="driver"><option value="">選択してください</option></select>
 </div>
 <div class="form-group">
 <label for="leader">筆頭(飲酒運転確認者)</label>
-<select id="leader"><option value="">選択してください</option><option value="driver-only">(運転者のみ)</option><option value="No5">大野</option><option value="No3">平野</option><option value="No6">赤土</option><option value="No4">田中</option><option value="No7">春沢</option><option value="No8">傑</option><option value="No9">小島</option><option value="No10">土肥</option><option value="No11">相沢</option><option value="No12">青木</option><option value="No1">新居</option><option value="No2">竪月</option></select>
+<select id="leader"><option value="">選択してください</option><option value="driver-only">(運転者のみ)</option></select>
 </div>
 <div class="form-group">
 <label for="operationType">運行内容</label>
@@ -530,38 +633,39 @@ Ver.0.1.2
 <label for="meterDistance">メーター距離数</label>
 <input id="meterDistance" placeholder="距離を入力" type="number">
 </div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
 <div class="form-group">
 <label for="operationStart">運行開始</label>
-<input id="operationStart" onblur="syncTimes('operationStart')" type="time">
+<input id="operationStart" type="time" onblur="syncTimes('operationStart');formatTimeInput(this)" oninput="autoFormatTime(this)">
 </div>
 <div class="form-group">
 <label for="operationEnd">運行終了</label>
-<input id="operationEnd" onblur="syncTimes('operationEnd')" type="time">
+<input id="operationEnd" type="time" onblur="syncTimes('operationEnd');formatTimeInput(this)" oninput="autoFormatTime(this)">
+</div>
 </div>
 <div class="form-group">
 <label for="vehicleMemo">備考</label>
 <textarea id="vehicleMemo" placeholder="車両に関する備考" rows="2"></textarea>
 </div>
 </div>
-<div class="form-group">
-<label for="startTime">開始時刻</label>
-<input id="startTime" onblur="syncTimes('start')" type="time">
-</div>
-<div class="form-group">
-<label for="endTime">終了時刻</label>
-<input id="endTime" onblur="syncTimes('end')" type="time">
-</div>
+
 <!-- 出動人員 -->
 <div class="form-group">
 <label>出動人員</label>
 <div class="member-attendance" id="memberAttendance"></div>
 </div>
+
 <div class="form-group">
 <label for="activityMemo">活動メモ</label>
 <textarea id="activityMemo" placeholder="活動の詳細を入力してください" rows="3"></textarea>
 </div>
+
+<div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
 <button class="btn btn-success" id="submitBtn" type="submit">活動を登録</button>
-<button class="btn btn-secondary" id="cancelEditBtn" type="button" onclick="cancelEdit()" style="display:none; background:#6c757d; color:white;">キャンセル</button>
+<button class="btn" id="cancelEditBtn" type="button" onclick="cancelEdit()" style="display:none;background:#6c757d;color:white;">編集キャンセル</button>
+<button class="btn" id="clearFormBtn" type="button" onclick="clearActivityForm()" style="background:#95a5a6;color:white;">キャンセル</button>
+</div>
+
 </form>
 </div>
 </div>
@@ -1889,12 +1993,12 @@ Ver.0.1.2
                     <div class="individual-time" id="individual-${member.id}" style="display:none;">
                         <label>
                             <input type="checkbox" onchange="toggleIndividualTimeInputs('${member.id}')">
-                            個別時間登録
+                            個別時間
                         </label>
-                        <div id="time-inputs-${member.id}" style="display:none;margin-top:0.4rem;display:none;">
-                            <input type="time" class="individual-start" style="width:110px;">
+                        <div id="time-inputs-${member.id}" class="indiv-time-inputs" style="display:none;">
+                            <input type="time" class="individual-start" oninput="autoFormatTime(this)" onblur="formatTimeInput(this)">
                             〜
-                            <input type="time" class="individual-end" style="width:110px;">
+                            <input type="time" class="individual-end" oninput="autoFormatTime(this)" onblur="formatTimeInput(this)">
                         </div>
                     </div>`;
                 container.appendChild(memberDiv);
@@ -3355,6 +3459,7 @@ Ver.0.1.2
             document.querySelector('[data-form-title]').textContent = '✏️ 活動を編集';
             document.getElementById('submitBtn').textContent = '更新する';
             document.getElementById('cancelEditBtn').style.display = 'inline-block';
+            document.getElementById('clearFormBtn').style.display = 'none';
             document.getElementById('activityForm').dataset.editingId = activityId;
 
             // フォームに既存値を設定
@@ -3399,15 +3504,18 @@ Ver.0.1.2
             });
         }
 
-        // 編集キャンセル
+        // 編集キャンセル→活動一覧へ
         function cancelEdit() {
             delete document.getElementById('activityForm').dataset.editingId;
             document.querySelector('[data-form-title]').textContent = '📝 新しい活動を報告';
             document.getElementById('submitBtn').textContent = '活動を登録';
             document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('clearFormBtn').style.display = 'inline-block';
             document.getElementById('activityForm').reset();
             document.getElementById('vehicleInfo').style.display = 'none';
             initializeMemberAttendance();
+            // 活動一覧へ遷移
+            showTab('activity-list', document.querySelector('.nav-tab:nth-child(3)'));
         }
 
         // 団員一覧の表示（簡素化）
@@ -3539,6 +3647,46 @@ Ver.0.1.2
             alert(`${memberName}さんのパスワードと\nログインIDを初期状態にリセットしました。`);
         }
 
+        // 4桁入力で時刻変換（0945→09:45）
+        function autoFormatTime(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val.length >= 4) {
+                const h = val.substring(0, 2);
+                const m = val.substring(2, 4);
+                if (parseInt(h) <= 23 && parseInt(m) <= 59) {
+                    input.value = `${h}:${m}`;
+                }
+            }
+        }
+
+        function formatTimeInput(input) {
+            let val = input.value.replace(/[^0-9]/g, '');
+            if (val.length === 3) val = '0' + val;
+            if (val.length === 4) {
+                const h = val.substring(0, 2);
+                const m = val.substring(2, 4);
+                if (parseInt(h) <= 23 && parseInt(m) <= 59) {
+                    input.value = `${h}:${m}`;
+                }
+            }
+        }
+
+        // フォーム全クリア→ダッシュボードへ
+        function clearActivityForm() {
+            document.getElementById('activityForm').reset();
+            document.getElementById('vehicleInfo').style.display = 'none';
+            delete document.getElementById('activityForm').dataset.editingId;
+            document.querySelector('[data-form-title]').textContent = '📝 新しい活動を報告';
+            document.getElementById('submitBtn').textContent = '活動を登録';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+            document.getElementById('clearFormBtn').style.display = 'inline-block';
+            initializeMemberAttendance();
+            setTodayDate();
+            checkDraftWarning();
+            // ダッシュボードへ遷移
+            showTab('dashboard', document.querySelector('.nav-tab:nth-child(1)'));
+        }
+
         // 今日の日付を設定
         function setTodayDate() {
             const today = new Date().toISOString().split('T')[0];
@@ -3597,7 +3745,7 @@ Ver.0.1.2
             }
         })();
 
-        console.log('🚒 消防団活動報告システム Ver.0.1.2 読み込み完了！');
+        console.log('🚒 消防団活動報告システム Ver.0.1.4 読み込み完了！');
     </script>
 
 </body></html>
