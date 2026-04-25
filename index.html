@@ -12,22 +12,40 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --red: #c0392b;
+            --red-dark: #a93226;
+            --red-light: #e74c3c;
+            --navy: #1a2744;
+            --navy-light: #2c3e6b;
+            --gold: #f39c12;
+            --bg: #f0f2f5;
+            --white: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #dce1e7;
+            --shadow: 0 2px 12px rgba(0,0,0,0.10);
+            --radius: 12px;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
             min-height: 100vh;
             display: flex;
             align-items: flex-start;
             justify-content: center;
         }
 
+        /* ===== ログイン画面 ===== */
         .login-container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            background: var(--white);
+            padding: 2.5rem 2rem;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             width: 100%;
             max-width: 400px;
+            margin: 2rem 1rem;
         }
 
         .login-header {
@@ -36,321 +54,343 @@
         }
 
         .login-header h1 {
-            color: #333;
+            color: var(--navy);
+            font-size: 1.4rem;
             margin-bottom: 0.5rem;
         }
 
         .login-header p {
-            color: #666;
-            font-size: 0.9rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e1e5e9;
-            border-radius: 5px;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
             font-size: 1rem;
-            transition: border-color 0.3s;
+            transition: border-color 0.2s;
+            background: var(--white);
+            color: var(--text);
         }
 
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--red);
         }
 
         .login-btn {
             width: 100%;
-            padding: 0.75rem;
-            background: #667eea;
+            padding: 0.875rem;
+            background: var(--red);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s;
             margin-bottom: 1rem;
+            letter-spacing: 0.05em;
         }
 
-        .login-btn:hover {
-            background: #5a6fd8;
-        }
+        .login-btn:hover { background: var(--red-dark); }
 
         .first-time-btn {
             width: 100%;
             padding: 0.75rem;
-            background: #28a745;
+            background: #27ae60;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: background 0.3s;
+            transition: background 0.2s;
         }
 
-        .first-time-btn:hover {
-            background: #218838;
-        }
+        .first-time-btn:hover { background: #219a52; }
 
         .password-setup-container {
             display: none;
-            background: white;
+            background: var(--white);
             padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border-radius: var(--radius);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
             width: 100%;
             max-width: 400px;
+            margin: 2rem 1rem;
         }
 
         .back-btn {
-            background: #6c757d;
+            background: #95a5a6;
             color: white;
             border: none;
             padding: 0.5rem 1rem;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
 
-        .back-btn:hover {
-            background: #5a6268;
-        }
-
+        /* ===== メインアプリ ===== */
         .main-app {
             display: none;
-            max-width: 1200px;
+            width: 100%;
+            max-width: 860px;
             margin: 0 auto;
-            padding: 2rem;
-            background: #f5f5f5;
+            padding: 0.75rem;
             min-height: 100vh;
+            background: var(--bg);
         }
 
+        /* ===== ヘッダー ===== */
         .header {
-            background: #4a5568;
+            background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
             color: white;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
+            padding: 0.875rem 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: var(--shadow);
         }
 
         .header h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            letter-spacing: 0.02em;
         }
 
-        .sync-status {
-            background: #ffc107;
-            color: #212529;
-            padding: 0.25rem 0.5rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            margin-left: 1rem;
-        }
-
-        .nav-tabs {
-            background: #8b4513;
-            border-radius: 5px;
-            margin-bottom: 2rem;
+        .header-right {
             display: flex;
-            overflow-x: auto;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .nav-tab {
-            padding: 1rem 2rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1rem;
-            color: white;
-            transition: all 0.3s;
+        .header-user {
+            font-size: 0.85rem;
+            opacity: 0.9;
             white-space: nowrap;
         }
 
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.4);
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .logout-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* ===== ナビタブ ===== */
+        .nav-tabs {
+            background: var(--navy);
+            border-radius: var(--radius);
+            margin-bottom: 0.75rem;
+            display: flex;
+            overflow-x: auto;
+            box-shadow: var(--shadow);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .nav-tab {
+            padding: 0.875rem 1.25rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.65);
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex: 1;
+            min-width: 70px;
+            text-align: center;
+        }
+
         .nav-tab.active {
-            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            background: rgba(255,255,255,0.15);
+            border-bottom: 3px solid var(--gold);
         }
 
-        .nav-tab:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+        .nav-tab:hover { color: white; background: rgba(255,255,255,0.08); }
 
-        .tab-content {
-            display: none;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .tab-content.active {
-            display: block;
-        }
-
+        /* ===== カード ===== */
         .card {
-            background: white;
-            border-radius: 10px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow);
         }
 
+        .card h3 {
+            font-size: 1rem;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        /* ===== ダッシュボードカード ===== */
+        .stat-card {
+            border-radius: 10px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
+        /* ===== ボタン ===== */
         .btn {
             padding: 0.5rem 1rem;
             border: none;
-            border-radius: 5px;
+            border-radius: 7px;
             cursor: pointer;
-            font-size: 0.9rem;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 0.4rem;
+            margin-bottom: 0.4rem;
+            transition: all 0.2s;
+            display: inline-block;
         }
 
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
+        .btn:active { transform: scale(0.97); }
 
-        .btn-primary:hover {
-            background: #5a6fd8;
-        }
+        .btn-primary { background: #3498db; color: white; }
+        .btn-primary:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; color: white; }
+        .btn-success:hover { background: #219a52; }
+        .btn-warning { background: var(--gold); color: white; }
+        .btn-warning:hover { background: #e67e22; }
+        .btn-danger { background: var(--red); color: white; }
+        .btn-danger:hover { background: var(--red-dark); }
 
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .btn-success:hover {
-            background: #218838;
-        }
-
-        .btn-warning {
-            background: #ffc107;
-            color: #212529;
-        }
-
-        .btn-warning:hover {
-            background: #e0a800;
-        }
-
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c82333;
-        }
-
-        .logout-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .logout-btn:hover {
-            background: #c82333;
-        }
-
-        .vehicle-info {
-            display: none;
-            background: #e3f2fd;
-            padding: 1rem;
-            border-radius: 5px;
-            margin-top: 1rem;
-        }
-
+        /* ===== 団員チェックボックス ===== */
         .member-attendance {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.5rem;
-            margin-top: 1rem;
         }
 
         .member-item {
-            background: #f8f9fa;
-            padding: 0.5rem;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 0.625rem 0.75rem;
+            border: 2px solid transparent;
+            transition: all 0.2s;
         }
 
-        .member-checkbox {
-            margin-right: 0.5rem;
+        .member-item:has(.member-checkbox:checked) {
+            border-color: var(--red);
+            background: #fff5f5;
+        }
+
+        .member-item label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .member-item .member-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--red);
+            flex-shrink: 0;
         }
 
         .individual-time {
             display: none;
             margin-top: 0.5rem;
-            padding: 0.5rem;
-            background: #fff;
-            border-radius: 3px;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
         }
 
-        .individual-time input {
-            width: 80px;
-            padding: 0.25rem;
-            margin: 0 0.25rem;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        .admin-only {
-            display: none;
-        }
-
-        .period-selector {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: #e9ecef;
-            border-radius: 5px;
-        }
-
-        .sort-controls {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: #e9ecef;
-            border-radius: 5px;
+        .individual-time label {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
             align-items: center;
+            gap: 0.4rem;
+            font-weight: normal;
+            color: var(--text-light);
+            cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            .main-app {
-                padding: 1rem;
-            }
+        .individual-time input[type="time"] {
+            padding: 0.25rem 0.4rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            font-size: 0.85rem;
+            width: auto;
+        }
 
-            .nav-tabs {
-                flex-wrap: wrap;
-            }
+        /* ===== 期間セレクター ===== */
+        .period-selector {
+            background: var(--bg);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
 
-            .nav-tab {
-                padding: 0.75rem 1rem;
-                font-size: 0.9rem;
-            }
+        .period-selector label { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+        .period-selector select { padding: 0.375rem 0.75rem; border-radius: 6px; border: 1px solid var(--border); font-size: 0.9rem; }
 
-            .member-attendance {
-                grid-template-columns: 1fr;
-            }
-
-            .sort-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
+        /* ===== スマホ対応 ===== */
+        @media (max-width: 600px) {
+            .main-app { padding: 0.5rem; }
+            .header h1 { font-size: 1rem; }
+            .nav-tab { padding: 0.75rem 0.5rem; font-size: 0.8rem; }
+            .card { padding: 1rem; }
+            .stat-card .stat-number { font-size: 2rem; }
+            .member-attendance { grid-template-columns: repeat(2, 1fr); }
+            .btn { font-size: 0.8rem; padding: 0.45rem 0.75rem; }
         }
     </style>
 </head>
@@ -360,9 +400,9 @@
 <div class="login-header">
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
-<div style="background: #d4edda; padding: 0.5rem; border-radius: 5px; margin-top: 1rem; font-size: 0.8rem; color: #155724; text-align: center;">
-                Ver.0.0.21
-            </div>
+<div style="background:#fff0f0;border:1px solid #ffcccc;padding:0.5rem;border-radius:5px;margin-top:1rem;font-size:0.85rem;color:var(--red);text-align:center;font-weight:bold;">
+Ver.0.1.2
+</div>
 </div>
 <form id="loginForm">
 <div class="form-group">
@@ -408,8 +448,9 @@
 <div class="main-app" id="mainApp" style="display: none;">
 <div class="header">
 <h1>🚒 消防団活動報告システム</h1>
-<div style="display: flex; align-items: center; gap: 0.75rem;">
-<span id="currentUser" style="color:white;"></span>
+<div class="header-right">
+<span class="header-user" id="currentUser"></span>
+<button class="logout-btn" onclick="showMyPage()" style="background:rgba(255,255,255,0.15);margin-right:0.4rem;">👤 マイページ</button>
 <button class="logout-btn" onclick="logout()">ログアウト</button>
 </div>
 </div>
@@ -1064,7 +1105,8 @@
         // データ保存用のキー
         const STORAGE_KEYS = {
             passwords: 'fireCorps_passwords',
-            activities: 'fireCorps_activities'
+            activities: 'fireCorps_activities',
+            loginIds: 'fireCorps_loginIds'  // カスタムログインID管理
         };
 
         // 現在のユーザー
@@ -1088,10 +1130,11 @@
         // Firebaseからデータを読み込む
         async function loadFromFirebase() {
             try {
-                const [actSnap, memSnap, pwSnap] = await Promise.all([
+                const [actSnap, memSnap, pwSnap, idSnap] = await Promise.all([
                     db.ref('activities').get(),
                     db.ref('members').get(),
-                    db.ref('passwords').get()
+                    db.ref('passwords').get(),
+                    db.ref('loginIds').get()
                 ]);
 
                 if (actSnap.exists()) {
@@ -1103,17 +1146,19 @@
                 if (memSnap.exists()) {
                     const data = memSnap.val();
                     const fbMembers = Array.isArray(data) ? data : Object.values(data);
-                    // 既存のmembers配列を更新
                     fbMembers.forEach(fm => {
                         const idx = members.findIndex(m => m.id === fm.id);
                         if (idx !== -1) Object.assign(members[idx], fm);
                         else members.push(fm);
                     });
-                    localStorage.setItem('members_cache', JSON.stringify(members));
                 }
 
                 if (pwSnap.exists()) {
                     localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(pwSnap.val()));
+                }
+
+                if (idSnap.exists()) {
+                    localStorage.setItem(STORAGE_KEYS.loginIds, JSON.stringify(idSnap.val()));
                 }
 
                 return true;
@@ -1123,7 +1168,6 @@
             }
         }
 
-        // Firebaseにアクティビティを保存
         async function saveActivitiesToFirebase() {
             try {
                 const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
@@ -1133,13 +1177,14 @@
             }
         }
 
-        // Firebaseに団員情報を保存
         async function saveMembersToFirebase() {
             try {
                 const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
                 await Promise.all([
                     db.ref('members').set(members),
-                    db.ref('passwords').set(passwords)
+                    db.ref('passwords').set(passwords),
+                    db.ref('loginIds').set(loginIds)
                 ]);
             } catch(e) {
                 console.warn('Firebase団員保存失敗:', e.message);
@@ -1151,7 +1196,7 @@
         let members = [
             { id: 'No5', name: '大野敏治', role: '部長', nickname: '大野', isAdmin: true, isExcluded: false },
             { id: 'No3', name: '平野雄大', role: '副部長', nickname: '平野', isAdmin: true, isExcluded: false },
-            { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', isAdmin: true, isExcluded: false },
+            { id: 'No6', name: '赤土大輔', role: '副部長', nickname: '赤土', isAdmin: true, isMaster: true, isExcluded: false },
             { id: 'No4', name: '田中秀和', role: '班長', nickname: '田中', isAdmin: false, isExcluded: false },
             { id: 'No7', name: '春沢裕', role: '班長', nickname: '春沢', isAdmin: false, isExcluded: false },
             { id: 'No8', name: '宮林傑', role: '班長', nickname: '傑', isAdmin: false, isExcluded: false },
@@ -1572,40 +1617,50 @@
             const password = document.getElementById('password').value;
             const saveId = document.getElementById('saveLoginId').checked;
 
-            let user;
+            if (!loginId) {
+                alert('IDを入力してください。');
+                return;
+            }
 
-            if (loginId === '') {
-                user = { id: 'admin', name: '管理者', nickname: '管理者', role: '管理者', isAdmin: true, isExcluded: false };
-            } else if (loginId === '0') {
-                user = { id: 'guest', name: 'ゲスト', nickname: 'ゲスト', role: '団員', isAdmin: false, isExcluded: false };
-            } else {
-                user = members.find(m =>
-                    m.name.replace(/\s+/g, '') === loginId || m.id === loginId
-                );
-                if (!user) {
-                    alert('ユーザーIDが見つかりません。');
+            // カスタムログインID → メンバー名前のマッピングを取得
+            const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
+
+            // 名前（全スペース除去）またはメンバーID またはカスタムログインIDで検索
+            let user = members.find(m => {
+                const customId = loginIds[m.id];
+                return m.name.replace(/\s+/g, '') === loginId ||
+                       m.id === loginId ||
+                       (customId && customId === loginId);
+            });
+            if (!user) {
+                alert('ユーザーIDが見つかりません。');
+                return;
+            }
+
+            // パスワードチェック（設定済みの場合のみ）
+            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+            const userPassword = passwords[user.name];
+            if (userPassword && userPassword.password !== '') {
+                if (userPassword.password !== password) {
+                    alert('パスワードが正しくありません。');
                     return;
-                }
-                const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
-                const userPassword = passwords[user.name];
-                if (userPassword && userPassword.password !== '') {
-                    if (userPassword.password !== password) {
-                        alert('パスワードが正しくありません。');
-                        return;
-                    }
                 }
             }
 
-            // ログインIDをデバイスに保存
+            // マスター権限はコードで管理（Firebaseから来た情報より優先）
+            const masterIds = ['No6']; // 赤土大輔のみ
+            if (masterIds.includes(user.id)) {
+                user = { ...user, isMaster: true, isAdmin: true };
+            }
+
+            // ログインIDを保存
             if (saveId) {
                 localStorage.setItem('savedLoginId', document.getElementById('loginId').value);
             } else {
                 localStorage.removeItem('savedLoginId');
             }
 
-            // ログイン状態をsessionStorageに保存（更新しても維持）
             sessionStorage.setItem('currentUser', JSON.stringify(user));
-
             doLogin(user);
         });
 
@@ -1822,28 +1877,26 @@
         function initializeMemberAttendance() {
             const container = document.getElementById('memberAttendance');
             container.innerHTML = '';
-            
+
             members.forEach(member => {
                 const memberDiv = document.createElement('div');
                 memberDiv.className = 'member-item';
-                
                 memberDiv.innerHTML = `
                     <label>
                         <input type="checkbox" class="member-checkbox" value="${member.id}" onchange="toggleIndividualTime('${member.id}')">
                         ${member.nickname}
                     </label>
-                    <div class="individual-time" id="individual-${member.id}">
+                    <div class="individual-time" id="individual-${member.id}" style="display:none;">
                         <label>
                             <input type="checkbox" onchange="toggleIndividualTimeInputs('${member.id}')">
                             個別時間登録
                         </label>
-                        <div id="time-inputs-${member.id}" style="display: none;">
-                            <input type="time" class="individual-start" placeholder="開始">
-                            <input type="time" class="individual-end" placeholder="終了">
+                        <div id="time-inputs-${member.id}" style="display:none;margin-top:0.4rem;display:none;">
+                            <input type="time" class="individual-start" style="width:110px;">
+                            〜
+                            <input type="time" class="individual-end" style="width:110px;">
                         </div>
-                    </div>
-                `;
-                
+                    </div>`;
                 container.appendChild(memberDiv);
             });
         }
@@ -1952,16 +2005,11 @@
             localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(activities));
             // Firebaseにも保存
             saveActivitiesToFirebase();
-
-            this.reset();
             document.getElementById('vehicleInfo').style.display = 'none';
             initializeMemberAttendance();
             generatePeriodOptions();
             displayActivityList();
             setTimeout(checkDraftWarning, 100);
-
-            // OneDrive設定済みなら自動エクスポート
-            autoExport();
 
             // ダッシュボードへ遷移
             const dashBtn = document.querySelector('.nav-tab:nth-child(1)');
@@ -2087,30 +2135,38 @@
             const allMonthActivities = monthActivities.slice().sort((a,b) => b.date.localeCompare(a.date));
             const reiwaYear = toReiwaYear(fiscalYear);
 
+            const masterSection = (currentUser && currentUser.isMaster) ? `
+                <div style="background:#fff0f0;border:1px solid #ffcccc;padding:1rem;border-radius:8px;margin-bottom:1rem;">
+                    <h4 style="color:#dc3545;margin-bottom:0.75rem;">🔑 マスター機能</h4>
+                    <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+                        <button class="btn btn-primary" onclick="exportHTML()">HTMLデータ出力</button>
+                        <button class="btn btn-success" onclick="exportExcel()">Excelエクスポート</button>
+                        <button class="btn btn-warning" onclick="importData()">Excelインポート</button>
+                    </div>
+                </div>` : '';
+
             const adminSection = (currentUser && currentUser.isAdmin) ? `
-                <div style="background: #e9ecef; padding: 1rem; border-radius: 5px; margin-bottom: 1rem;">
-                    <h4>🔧 管理者機能</h4>
-                    <button class="btn btn-primary" onclick="exportHTML()">HTMLデータ出力</button>
-                    <button class="btn btn-success" onclick="exportExcel()">活動結果エクセル出力</button>
-                    <button class="btn btn-warning" onclick="importData()">データインポート(XLSX)</button>
-                    <button class="btn" onclick="showOneDriveSettings()" style="background:#6f42c1;color:white;margin-left:4px;">☁️ OneDrive設定</button>
+                <div style="background:#e9ecef;padding:1rem;border-radius:8px;margin-bottom:1rem;">
+                    <h4 style="margin-bottom:0.5rem;">🔧 管理者機能</h4>
+                    <span style="font-size:0.85rem;color:#666;">団員情報の編集は団員管理タブから行えます。</span>
                 </div>` : '';
 
             const dashboardContent = `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                    <div style="background: #667eea; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">${countedMonthActivities.length}</div>
-                        <div>${year}年${month}月の活動回数</div>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem;">
+                    <div class="stat-card" style="background:linear-gradient(135deg,#667eea,#764ba2);">
+                        <div class="stat-number">${countedMonthActivities.length}</div>
+                        <div class="stat-label">${year}年${month}月<br>活動回数</div>
                     </div>
-                    <div style="background: #28a745; color: white; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">${countedMonthVehicle.length}</div>
-                        <div>${year}年${month}月の車両出動</div>
+                    <div class="stat-card" style="background:linear-gradient(135deg,#27ae60,#2ecc71);">
+                        <div class="stat-number">${countedMonthVehicle.length}</div>
+                        <div class="stat-label">${year}年${month}月<br>車両出動</div>
                     </div>
-                    <div style="background: #ffc107; color: #212529; padding: 1rem; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 2rem; font-weight: bold;">${countedFiscalYear.length}</div>
-                        <div>総活動回数(令和${reiwaYear}年度)</div>
+                    <div class="stat-card" style="background:linear-gradient(135deg,#f39c12,#e67e22);">
+                        <div class="stat-number">${countedFiscalYear.length}</div>
+                        <div class="stat-label">令和${reiwaYear}年度<br>総活動回数</div>
                     </div>
                 </div>
+                ${masterSection}
                 ${adminSection}
                 <h4>📋 ${year}年${month}月の活動 (${allMonthActivities.length}件)</h4>
                 <div style="max-height: 400px; overflow-y: auto;">
@@ -2325,7 +2381,7 @@
                 (a.attendees || []).join(' , '),
                 a.vehicleDispatch,
                 a.driver || '',
-                (a.leader && a.leader !== a.driver) ? a.leader : '',
+                (a.leader && a.leader !== a.driver && a.leader !== 'driver-only') ? a.leader : '',
                 a.operationType || '',
                 a.meterDistance || '',
                 '',
@@ -2348,10 +2404,12 @@
                 }
             });
 
-            const memHeaders = ['MemberID','氏名','役職','略称','IsExcluded','IsAdmin','Password'];
+            const memHeaders = ['MemberID','氏名','役職','略称','IsExcluded','IsAdmin','Password','LoginID'];
+            const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
             const memRows = members.map(m => {
                 const pw = passwords[m.name] ? passwords[m.name].password : '';
-                return [m.id, m.name, m.role, m.nickname, m.isExcluded, m.isAdmin, pw];
+                const customId = loginIds[m.id] || '';
+                return [m.id, m.name, m.role, m.nickname, m.isExcluded, m.isAdmin, pw, customId];
             });
 
             const sheets = [
@@ -2620,6 +2678,7 @@
                         // Members（団員情報＋パスワード更新）
                         if (memRows.length > 1) {
                             const passwords = {};
+                            const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
                             for (let i = 1; i < memRows.length; i++) {
                                 const r = memRows[i];
                                 if (!r[0]) continue;
@@ -2630,6 +2689,7 @@
                                 const isExcluded = r[4] === 'TRUE' || r[4] === '1';
                                 const isAdmin    = r[5] === 'TRUE' || r[5] === '1';
                                 const pw         = r[6] || '';
+                                const customId   = r[7] || '';
 
                                 // membersグローバル配列を更新
                                 const idx = members.findIndex(m => m.id === memberId);
@@ -2640,14 +2700,17 @@
                                     members[idx].isExcluded = isExcluded;
                                     members[idx].isAdmin    = isAdmin;
                                 } else {
-                                    // 新規団員追加
                                     members.push({ id: memberId, name: memberName, role, nickname, isExcluded, isAdmin });
                                 }
 
                                 // パスワード（空欄でも登録）
                                 passwords[memberName] = { password: pw, isDefault: pw === '', lastChanged: new Date().toISOString() };
+
+                                // H列：カスタムLoginID
+                                if (customId) loginIds[memberId] = customId;
                             }
                             localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+                            localStorage.setItem(STORAGE_KEYS.loginIds, JSON.stringify(loginIds));
                         }
 
                         localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(newActivities));
@@ -2841,6 +2904,7 @@
             // Members
             if (memRows.length > 1) {
                 const passwords = {};
+                const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
                 for (let i = 1; i < memRows.length; i++) {
                     const r = memRows[i];
                     if (!r[0]) continue;
@@ -2849,8 +2913,11 @@
                     if (idx !== -1) Object.assign(members[idx], memberData);
                     else members.push(memberData);
                     passwords[r[1]] = { password: r[6]||'', isDefault: r[6]===''||!r[6], lastChanged: new Date().toISOString() };
+                    // H列：カスタムLoginID
+                    if (r[7]) loginIds[r[0]] = r[7];
                 }
                 localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+                localStorage.setItem(STORAGE_KEYS.loginIds, JSON.stringify(loginIds));
             }
 
             localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(newActivities));
@@ -2865,7 +2932,143 @@
             exportExcel();
         }
 
-        // ===== OneDrive設定UI =====
+        // ===== マイページ =====
+        function showMyPage() {
+            if (!currentUser) return;
+            const old = document.getElementById('myPageModal');
+            if (old) old.remove();
+
+            const activities = JSON.parse(localStorage.getItem(STORAGE_KEYS.activities) || '[]');
+            const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
+            const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+
+            // 自分の出席活動（新しい順）
+            const myActivities = activities
+                .filter(a => (a.attendees || []).includes(currentUser.id))
+                .sort((a, b) => `${b.date} ${b.startTime}`.localeCompare(`${a.date} ${a.startTime}`));
+
+            const currentLoginId = loginIds[currentUser.id] || currentUser.name;
+            const currentPw = passwords[currentUser.name] || {};
+
+            const actListHtml = myActivities.length > 0
+                ? myActivities.map(a => {
+                    const dateDisplay = buildDateDisplay(a.date);
+                    const vehicleBadge = a.vehicleDispatch
+                        ? `<span style="background:var(--red);color:white;font-size:0.7rem;padding:0.1rem 0.4rem;border-radius:8px;margin-left:0.3rem;">🚗</span>` : '';
+                    return `<div data-activity-id="${a.id}" class="activity-card" style="padding:0.5rem 0;border-bottom:1px solid var(--border);cursor:pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background=''">
+                        <div style="font-weight:600;font-size:0.9rem;">${a.content || '（未入力）'}${vehicleBadge}</div>
+                        <div style="font-size:0.8rem;color:var(--text-light);">${dateDisplay} ${a.startTime}〜${a.endTime}</div>
+                    </div>`;
+                }).join('')
+                : '<p style="color:var(--text-light);font-size:0.9rem;padding:1rem 0;">出席した活動はまだありません。</p>';
+
+            const modal = document.createElement('div');
+            modal.id = 'myPageModal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:1rem;overflow-y:auto;';
+            modal.innerHTML = `
+                <div style="background:white;border-radius:12px;padding:1.5rem;width:100%;max-width:480px;margin:1rem auto;box-shadow:0 10px 30px rgba(0,0,0,0.3);">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+                        <h3 style="color:var(--navy);">👤 マイページ</h3>
+                        <button onclick="document.getElementById('myPageModal').remove()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;color:#666;">✕</button>
+                    </div>
+
+                    <!-- 基本情報 -->
+                    <div style="background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+                        <div style="font-size:0.85rem;color:var(--text-light);margin-bottom:0.25rem;">氏名・役職</div>
+                        <div style="font-weight:700;font-size:1.1rem;">${currentUser.name}　<span style="font-size:0.85rem;color:var(--text-light);font-weight:normal;">${currentUser.role}</span></div>
+                    </div>
+
+                    <!-- 設定変更フォーム -->
+                    <div style="margin-bottom:1.25rem;">
+                        <h4 style="margin-bottom:0.75rem;color:var(--navy);font-size:0.95rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;">⚙️ アカウント設定</h4>
+
+                        <div style="margin-bottom:0.75rem;">
+                            <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.3rem;">ログインID</label>
+                            <input type="text" id="myLoginId" value="${currentLoginId}" placeholder="ログインIDを入力" style="width:100%;padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+                            <div style="font-size:0.75rem;color:var(--text-light);margin-top:0.2rem;">※ 名前・メンバーIDも引き続き使用できます</div>
+                        </div>
+
+                        <div style="margin-bottom:0.75rem;">
+                            <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.3rem;">略称</label>
+                            <input type="text" id="myNickname" value="${currentUser.nickname || ''}" placeholder="略称を入力" style="width:100%;padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+                        </div>
+
+                        <div style="margin-bottom:0.75rem;">
+                            <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.3rem;">新しいパスワード</label>
+                            <input type="password" id="myNewPassword" placeholder="変更する場合のみ入力" style="width:100%;padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+                        </div>
+
+                        <div style="margin-bottom:1rem;">
+                            <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:0.3rem;">パスワード確認</label>
+                            <input type="password" id="myConfirmPassword" placeholder="もう一度入力" style="width:100%;padding:0.5rem 0.75rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+                        </div>
+
+                        <button onclick="saveMySettings()" style="width:100%;padding:0.75rem;background:var(--red);color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:0.95rem;">保存する</button>
+                        <div id="myPageStatus" style="margin-top:0.5rem;font-size:0.85rem;text-align:center;"></div>
+                    </div>
+
+                    <!-- 出席活動一覧 -->
+                    <div>
+                        <h4 style="margin-bottom:0.75rem;color:var(--navy);font-size:0.95rem;border-bottom:1px solid var(--border);padding-bottom:0.5rem;">📋 出席した活動（${myActivities.length}件）</h4>
+                        <div style="max-height:300px;overflow-y:auto;">
+                            ${actListHtml}
+                        </div>
+                    </div>
+                </div>`;
+
+            modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+            document.body.appendChild(modal);
+        }
+
+        // マイページの設定を保存
+        async function saveMySettings() {
+            const newLoginId = document.getElementById('myLoginId').value.trim();
+            const newNickname = document.getElementById('myNickname').value.trim();
+            const newPassword = document.getElementById('myNewPassword').value;
+            const confirmPassword = document.getElementById('myConfirmPassword').value;
+            const status = document.getElementById('myPageStatus');
+
+            // バリデーション
+            if (!newLoginId) { status.innerHTML = '<span style="color:red;">ログインIDを入力してください。</span>'; return; }
+            if (!newNickname) { status.innerHTML = '<span style="color:red;">略称を入力してください。</span>'; return; }
+            if (newPassword && newPassword !== confirmPassword) {
+                status.innerHTML = '<span style="color:red;">パスワードが一致しません。</span>'; return;
+            }
+
+            // カスタムログインID保存
+            const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
+            loginIds[currentUser.id] = newLoginId;
+            localStorage.setItem(STORAGE_KEYS.loginIds, JSON.stringify(loginIds));
+
+            // 略称更新
+            const idx = members.findIndex(m => m.id === currentUser.id);
+            if (idx !== -1) {
+                members[idx].nickname = newNickname;
+                currentUser.nickname = newNickname;
+            }
+
+            // パスワード更新
+            if (newPassword) {
+                const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
+                passwords[currentUser.name] = { password: newPassword, isDefault: false, lastChanged: new Date().toISOString() };
+                localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
+                // sessionStorage更新
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+            }
+
+            // Firebaseに保存
+            await saveMembersToFirebase();
+
+            // 保存したIDをlocalStorageにも反映
+            localStorage.setItem('savedLoginId', newLoginId);
+
+            status.innerHTML = '<span style="color:green;">✅ 保存しました！</span>';
+
+            // フォーム更新
+            initializeMemberAttendance();
+            initializeMemberSelectors();
+            displayMembersList();
+        }
 
         // 役職順位
         const ROLE_ORDER = ['部長','副部長','班長','団員','機能別'];
@@ -2933,7 +3136,7 @@
                     <div style="font-size:0.9rem;line-height:1.8;">
                         運行内容: ${activity.operationType || '未設定'}<br>
                         運転者: ${driverName}<br>
-                        筆頭（飲酒確認者）: ${activity.driver === activity.leader ? '（なし）' : leaderName}<br>
+                        筆頭（飲酒確認者）: ${(activity.driver === activity.leader || activity.leader === 'driver-only' || !activity.leader) ? '（なし）' : leaderName}<br>
                         メーター距離: ${activity.meterDistance || 0} km<br>
                         運行時間: ${activity.operationStart || '--:--'} 〜 ${activity.operationEnd || '--:--'}<br>
                         ${activity.vehicleMemo ? `備考: ${activity.vehicleMemo}` : ''}
@@ -3135,7 +3338,6 @@
             const updated = activities.filter(a => a.id !== activityId);
             localStorage.setItem(STORAGE_KEYS.activities, JSON.stringify(updated));
             saveActivitiesToFirebase();
-            autoExport();
             generatePeriodOptions();
             displayActivityList();
             checkDraftWarning();
@@ -3267,7 +3469,11 @@
                     </div>
                     <div style="margin-bottom:1rem;">
                         <label style="display:block;font-weight:bold;margin-bottom:0.25rem;">役職</label>
-                        <input type="text" id="editRole" value="${member.role}" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:5px;">
+                        <select id="editRole" style="width:100%;padding:0.5rem;border:1px solid #ccc;border-radius:5px;">
+                            ${['副分団長','部長','副部長','班長','機能別'].map(r =>
+                                `<option value="${r}" ${member.role === r ? 'selected' : ''}>${r}</option>`
+                            ).join('')}
+                        </select>
                     </div>
                     <div style="margin-bottom:1rem;">
                         <label style="display:block;font-weight:bold;margin-bottom:0.25rem;">略称</label>
@@ -3314,12 +3520,23 @@
 
         // パスワードリセット
         function resetMemberPassword(memberId, memberName) {
-            const confirmed = confirm('パスワードのリセットを実行してよいか本人に確認してください。\nパスワードをリセットしますか？');
+            const confirmed = confirm(`パスワードのリセットを実行してよいか本人に確認してください。\nパスワードをリセットしますか？\n\n※ログインIDも名前（初期状態）に戻ります。`);
             if (!confirmed) return;
+
+            // パスワードをリセット（空欄）
             const passwords = JSON.parse(localStorage.getItem(STORAGE_KEYS.passwords) || '{}');
-            passwords[memberName] = { password: 'password', isDefault: true, lastChanged: new Date().toISOString() };
+            passwords[memberName] = { password: '', isDefault: true, lastChanged: new Date().toISOString() };
             localStorage.setItem(STORAGE_KEYS.passwords, JSON.stringify(passwords));
-            alert(`${memberName}さんのパスワードを「password」にリセットしました。`);
+
+            // カスタムログインIDも削除（名前に戻す）
+            const loginIds = JSON.parse(localStorage.getItem(STORAGE_KEYS.loginIds) || '{}');
+            delete loginIds[memberId];
+            localStorage.setItem(STORAGE_KEYS.loginIds, JSON.stringify(loginIds));
+
+            // Firebaseに反映
+            saveMembersToFirebase();
+
+            alert(`${memberName}さんのパスワードと\nログインIDを初期状態にリセットしました。`);
         }
 
         // 今日の日付を設定
@@ -3366,9 +3583,13 @@
             if (savedUser) {
                 try {
                     const user = JSON.parse(savedUser);
-                    // membersから最新情報を取得（権限が変わっている可能性があるため）
-                    const freshUser = members.find(m => m.id === user.id);
-                    doLogin(freshUser || user);
+                    const freshUser = members.find(m => m.id === user.id) || user;
+                    // マスター権限はコードで管理
+                    const masterIds = ['No6'];
+                    if (masterIds.includes(freshUser.id)) {
+                        Object.assign(freshUser, { isMaster: true, isAdmin: true });
+                    }
+                    doLogin(freshUser);
                     return;
                 } catch(e) {
                     sessionStorage.removeItem('currentUser');
@@ -3376,7 +3597,7 @@
             }
         })();
 
-        console.log('🚒 消防団活動報告システム Ver.0.0.21 読み込み完了！');
+        console.log('🚒 消防団活動報告システム Ver.0.1.2 読み込み完了！');
     </script>
 
 </body></html>
