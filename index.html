@@ -483,7 +483,7 @@
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background:#fff0f0;border:1px solid #ffcccc;padding:0.5rem;border-radius:5px;margin-top:1rem;font-size:0.85rem;color:var(--red);text-align:center;font-weight:bold;">
-Ver.1.0.0
+Ver.1.0.1
 </div>
 </div>
 <form id="loginForm">
@@ -614,16 +614,16 @@ Ver.1.0.0
 </div>
 <div class="form-group">
 <label for="meterDistance">メーター距離数</label>
-<input id="meterDistance" placeholder="距離を入力" type="number">
+<input id="meterDistance" placeholder="距離を入力" type="number" inputmode="numeric" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
 <div class="form-group">
 <label for="operationStart">運行開始</label>
-<input id="operationStart" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)">
+<input id="operationStart" type="text" inputmode="numeric" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this);syncTimes('operationStart')" oninput="autoFormatTime(this)">
 </div>
 <div class="form-group">
 <label for="operationEnd">運行終了</label>
-<input id="operationEnd" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)">
+<input id="operationEnd" type="text" inputmode="numeric" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this);syncTimes('operationEnd')" oninput="autoFormatTime(this)">
 </div>
 </div>
 <div class="form-group">
@@ -638,11 +638,11 @@ Ver.1.0.0
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
 <div>
 <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">開始</div>
-<input id="startTime" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+<input id="startTime" type="text" inputmode="numeric" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this);syncTimes('start')" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
 </div>
 <div>
 <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:0.2rem;">終了</div>
-<input id="endTime" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
+<input id="endTime" type="text" inputmode="numeric" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this);syncTimes('end')" oninput="autoFormatTime(this)" style="width:100%;padding:0.5rem;border:2px solid var(--border);border-radius:7px;font-size:0.95rem;">
 </div>
 </div>
 <div style="font-size:0.75rem;color:var(--text-light);margin-top:0.3rem;">※ 4桁入力（例：0945）で自動変換</div>
@@ -1869,34 +1869,33 @@ Ver.1.0.0
         }
 
         // 時刻の同期（onblur版・入力中断防止）
+        // 時刻の同期（運行時間↔活動時間、type=text対応）
         function syncTimes(type) {
-            // 少し遅延を入れて、入力が完了してから同期
             setTimeout(() => {
-                const startTime = document.getElementById('startTime').value;
-                const endTime = document.getElementById('endTime').value;
-                const operationStart = document.getElementById('operationStart');
-                const operationEnd = document.getElementById('operationEnd');
-                
+                const startEl = document.getElementById('startTime');
+                const endEl = document.getElementById('endTime');
+                const opStartEl = document.getElementById('operationStart');
+                const opEndEl = document.getElementById('operationEnd');
+
+                const startTime = getTimeValue('startTime');
+                const endTime = getTimeValue('endTime');
+                const opStart = getTimeValue('operationStart');
+                const opEnd = getTimeValue('operationEnd');
+
                 if (type === 'start' && startTime) {
-                    if (!operationStart.value) {
-                        operationStart.value = startTime;
-                    }
+                    // 活動開始→運行開始が空なら自動入力
+                    if (!opStart && opStartEl) { opStartEl.value = startTime; }
                 } else if (type === 'end' && endTime) {
-                    if (!operationEnd.value) {
-                        operationEnd.value = endTime;
-                    }
-                } else if (type === 'operationStart') {
-                    const opStartTime = operationStart.value;
-                    if (opStartTime && !startTime) {
-                        document.getElementById('startTime').value = opStartTime;
-                    }
-                } else if (type === 'operationEnd') {
-                    const opEndTime = operationEnd.value;
-                    if (opEndTime && !endTime) {
-                        document.getElementById('endTime').value = opEndTime;
-                    }
+                    // 活動終了→運行終了が空なら自動入力
+                    if (!opEnd && opEndEl) { opEndEl.value = endTime; }
+                } else if (type === 'operationStart' && opStart) {
+                    // 運行開始→活動開始が空なら自動入力
+                    if (!startTime && startEl) { startEl.value = opStart; }
+                } else if (type === 'operationEnd' && opEnd) {
+                    // 運行終了→活動終了が空なら自動入力
+                    if (!endTime && endEl) { endEl.value = opEnd; }
                 }
-            }, 100); // 100ms遅延で入力完了を待つ
+            }, 150);
         }
 
         // 活動内容の予測変換（強化版）
@@ -1995,9 +1994,9 @@ Ver.1.0.0
                             個別時間
                         </label>
                         <div id="time-inputs-${member.id}" class="indiv-time-inputs" style="display:none;">
-                            <input type="time" class="individual-start" oninput="autoFormatTime(this)" onblur="formatTimeInput(this)">
+                            <input type="text" class="individual-start" inputmode="numeric" placeholder="0900" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)">
                             〜
-                            <input type="time" class="individual-end" oninput="autoFormatTime(this)" onblur="formatTimeInput(this)">
+                            <input type="text" class="individual-end" inputmode="numeric" placeholder="1700" maxlength="4" onblur="applyTimeFormat(this)" oninput="autoFormatTime(this)">
                         </div>
                     </div>`;
                 container.appendChild(memberDiv);
@@ -2015,18 +2014,16 @@ Ver.1.0.0
         function toggleIndividualTimeInputs(memberId) {
             const checkbox = document.querySelector(`#individual-${memberId} input[type="checkbox"]`);
             const timeInputs = document.getElementById(`time-inputs-${memberId}`);
-            timeInputs.style.display = checkbox.checked ? 'block' : 'none';
-            
-            // チェックした瞬間の時刻を初期値として設定
+            timeInputs.style.display = checkbox.checked ? 'flex' : 'none';
+
+            // チェックした瞬間に活動時間を初期値として設定
             if (checkbox.checked) {
-                const startTime = document.getElementById('startTime').value;
-                const endTime = document.getElementById('endTime').value;
+                const startTime = getTimeValue('startTime');
+                const endTime = getTimeValue('endTime');
                 const startInput = timeInputs.querySelector('.individual-start');
                 const endInput = timeInputs.querySelector('.individual-end');
-                
-                // 現在の時刻を常に設定（既存値があっても上書き）
-                if (startTime) startInput.value = startTime;
-                if (endTime) endInput.value = endTime;
+                if (startTime && startInput && !startInput.value) startInput.value = startTime;
+                if (endTime && endInput && !endInput.value) endInput.value = endTime;
             }
         }
 
@@ -3773,7 +3770,7 @@ Ver.1.0.0
             }
         })();
 
-        console.log('🚒 消防団活動報告システム Ver.1.0.0 読み込み完了！');
+        console.log('🚒 消防団活動報告システム Ver.1.0.1 読み込み完了！');
     </script>
 
 </body></html>
