@@ -483,7 +483,10 @@
 <h1>🚒 消防団活動報告システム</h1>
 <p>ログインして活動を記録しましょう</p>
 <div style="background:#fff0f0;border:1px solid #ffcccc;padding:0.5rem;border-radius:5px;margin-top:1rem;font-size:0.85rem;color:var(--red);text-align:center;font-weight:bold;">
-Ver.1.0.1
+Ver.1.0.2
+<div style="font-size:0.75rem;font-weight:normal;color:#888;margin-top:0.25rem;text-align:left;line-height:1.6;">
+・パスワードをデバイスに保存する機能を追加
+</div>
 </div>
 </div>
 <form id="loginForm">
@@ -496,9 +499,15 @@ Ver.1.0.1
 <input id="password" placeholder="パスワードを入力してください" required="" type="password">
 </div>
 <button class="login-btn" type="submit">ログイン</button>
-<div style="margin-top:0.75rem;display:flex;align-items:center;gap:0.5rem;">
+<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.4rem;">
+<div style="display:flex;align-items:center;gap:0.5rem;">
 <input type="checkbox" id="saveLoginId">
 <label for="saveLoginId" style="font-size:0.85rem;color:#666;cursor:pointer;">このデバイスにIDを保存する</label>
+</div>
+<div style="display:flex;align-items:center;gap:0.5rem;">
+<input type="checkbox" id="savePassword">
+<label for="savePassword" style="font-size:0.85rem;color:#666;cursor:pointer;">このデバイスにパスワードを保存する</label>
+</div>
 </div>
 <button class="first-time-btn" onclick="showPasswordSetup()" type="button">初回パスワード設定</button>
 </form>
@@ -1719,6 +1728,7 @@ Ver.1.0.1
             const loginId = document.getElementById('loginId').value.replace(/\s+/g, '');
             const password = document.getElementById('password').value;
             const saveId = document.getElementById('saveLoginId').checked;
+            const savePw = document.getElementById('savePassword').checked;
 
             if (!loginId) {
                 alert('IDを入力してください。');
@@ -1761,6 +1771,13 @@ Ver.1.0.1
                 localStorage.setItem('savedLoginId', document.getElementById('loginId').value);
             } else {
                 localStorage.removeItem('savedLoginId');
+            }
+
+            // パスワードを保存
+            if (savePw) {
+                localStorage.setItem('savedPassword', password);
+            } else {
+                localStorage.removeItem('savedPassword');
             }
 
             sessionStorage.setItem('currentUser', JSON.stringify(user));
@@ -1818,6 +1835,12 @@ Ver.1.0.1
             if (savedId) {
                 document.getElementById('loginId').value = savedId;
                 document.getElementById('saveLoginId').checked = true;
+            }
+            // 保存パスワードがあれば再表示
+            const savedPw = localStorage.getItem('savedPassword');
+            if (savedPw) {
+                document.getElementById('password').value = savedPw;
+                document.getElementById('savePassword').checked = true;
             }
         }
 
@@ -3751,6 +3774,13 @@ Ver.1.0.1
                 document.getElementById('saveLoginId').checked = true;
             }
 
+            // 保存されたパスワードを自動入力
+            const savedPw = localStorage.getItem('savedPassword');
+            if (savedPw) {
+                document.getElementById('password').value = savedPw;
+                document.getElementById('savePassword').checked = true;
+            }
+
             // sessionStorageにログイン状態が残っていれば自動ログイン（更新時対応）
             const savedUser = sessionStorage.getItem('currentUser');
             if (savedUser) {
@@ -3770,7 +3800,7 @@ Ver.1.0.1
             }
         })();
 
-        console.log('🚒 消防団活動報告システム Ver.1.0.1 読み込み完了！');
+        console.log('🚒 消防団活動報告システム Ver.1.0.2 読み込み完了！');
     </script>
 
 </body></html>
